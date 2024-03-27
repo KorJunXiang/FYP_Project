@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:landlordy/views/loginpage.dart';
 import 'package:landlordy/views/signuppage.dart';
 
-class MainPage extends StatefulWidget {
-  const MainPage({super.key});
+class WelcomePage extends StatefulWidget {
+  const WelcomePage({super.key});
 
   @override
-  State<MainPage> createState() => _MainPageState();
+  State<WelcomePage> createState() => _WelcomePageState();
 }
 
-class _MainPageState extends State<MainPage> {
+class _WelcomePageState extends State<WelcomePage> {
   late double screenWidth, screenHeight;
 
   @override

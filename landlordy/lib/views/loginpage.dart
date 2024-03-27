@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -6,6 +8,7 @@ import 'package:landlordy/shared/myserverconfig.dart';
 import 'package:landlordy/views/propertylistpage.dart';
 import 'package:landlordy/views/signuppage.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -21,6 +24,14 @@ class _LoginPageState extends State<LoginPage> {
   late double screenWidth, screenHeight;
   final _formKey = GlobalKey<FormState>();
   bool _isChecked = false;
+  bool _isEmailValid = true;
+  bool _isPassValid = true;
+
+  @override
+  void initState() {
+    super.initState();
+    loadpref();
+  }
 
   @override
   void dispose() {
@@ -74,6 +85,9 @@ class _LoginPageState extends State<LoginPage> {
                           TextFormField(
                             controller: _emailEditingController,
                             keyboardType: TextInputType.emailAddress,
+                            style: TextStyle(
+                              color: _isEmailValid ? Colors.black : Colors.red,
+                            ),
                             decoration: const InputDecoration(
                                 labelText: 'Email',
                                 labelStyle: TextStyle(
@@ -88,19 +102,43 @@ class _LoginPageState extends State<LoginPage> {
                                     fontWeight: FontWeight.bold,
                                     fontStyle: FontStyle.italic,
                                     fontSize: 16)),
-                            validator: (val) => val!.isEmpty ||
-                                    !val.contains("@") ||
-                                    !val.contains(".")
-                                ? "Enter a valid email"
-                                : null,
+                            validator: (val) {
+                              if (val!.isEmpty ||
+                                  !val.contains("@") ||
+                                  !val.contains(".")) {
+                                setState(() {
+                                  _isEmailValid = false;
+                                });
+                                return "Enter a valid email";
+                              } else {
+                                setState(() {
+                                  _isEmailValid = true;
+                                });
+                                return null;
+                              }
+                            },
                           ),
                           const SizedBox(
                             height: 30,
                           ),
                           TextFormField(
                               controller: _passEditingController,
-                              validator: (val) =>
-                                  val!.isEmpty ? "Enter your password" : null,
+                              style: TextStyle(
+                                color: _isPassValid ? Colors.black : Colors.red,
+                              ),
+                              validator: (val) {
+                                if (val!.isEmpty) {
+                                  setState(() {
+                                    _isPassValid = false;
+                                  });
+                                  return "Enter your password";
+                                } else {
+                                  setState(() {
+                                    _isPassValid = true;
+                                  });
+                                  return null;
+                                }
+                              },
                               obscureText: _passwordVisible,
                               decoration: InputDecoration(
                                   labelText: 'Password',
@@ -140,8 +178,9 @@ class _LoginPageState extends State<LoginPage> {
                                               .validate()) {
                                             return;
                                           }
+                                          saveremovepref(value!);
                                           setState(() {
-                                            _isChecked = value!;
+                                            _isChecked = value;
                                           });
                                         }),
                                     const Text(
@@ -240,16 +279,17 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  void _loginUser() {
+  void _loginUser() async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     String email = _emailEditingController.text;
-    String pass = _passEditingController.text;
+    String password = _passEditingController.text;
 
     http.post(
         Uri.parse("${MyServerConfig.server}/landlordy/php/user/login_user.php"),
-        body: {"email": email, "password": pass}).then((response) {
+        body: {"email": email, "password": password}).then((response) async {
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         if (data['status'] == "success") {
@@ -259,6 +299,7 @@ class _LoginPageState extends State<LoginPage> {
                 style: TextStyle(fontWeight: FontWeight.bold)),
             backgroundColor: Colors.green,
           ));
+          await prefs.setBool('login', true);
           Navigator.push(
               context,
               MaterialPageRoute(
@@ -274,5 +315,42 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
-  void saveremovepref(bool bool) {}
+  void saveremovepref(bool value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String email = _emailEditingController.text;
+    String password = _passEditingController.text;
+    if (value) {
+      await prefs.setString('email', email);
+      await prefs.setString('password', password);
+      await prefs.setBool('checkbox', value);
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Preferences Stored",
+            style: TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.green,
+      ));
+    } else {
+      await prefs.setString('email', '');
+      await prefs.setString('password', '');
+      await prefs.setBool('checkbox', false);
+      _emailEditingController.text = '';
+      _passEditingController.text = '';
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Preferences Removed",
+            style: TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.red,
+      ));
+    }
+  }
+
+  Future<void> loadpref() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String email = (prefs.getString('email')) ?? '';
+    String password = (prefs.getString('password')) ?? '';
+    _isChecked = (prefs.getBool('checkbox')) ?? false;
+    if (_isChecked) {
+      _emailEditingController.text = email;
+      _passEditingController.text = password;
+    }
+    setState(() {});
+  }
 }

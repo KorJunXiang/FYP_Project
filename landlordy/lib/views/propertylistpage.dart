@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:landlordy/models/user.dart';
+import 'package:landlordy/views/welcomepage.dart';
 
 class PropertyListPage extends StatefulWidget {
   final User userdata;
@@ -15,11 +16,24 @@ class _PropertyListPageState extends State<PropertyListPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Properties"),
+        automaticallyImplyLeading: false,
         centerTitle: true,
       ),
       body: Center(
         child: Column(
-          children: [Text(widget.userdata.username.toString())],
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(widget.userdata.username.toString()),
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const WelcomePage(),
+                      ));
+                },
+                child: const Text("Logout"))
+          ],
         ),
       ),
     );
