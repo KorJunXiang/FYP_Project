@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:landlordy/models/user.dart';
 import 'package:landlordy/shared/myserverconfig.dart';
-import 'package:landlordy/views/propertylistpage.dart';
+import 'package:landlordy/views/propertiespage.dart';
 import 'package:landlordy/views/welcomepage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -66,10 +66,10 @@ class _SplashPageState extends State<SplashPage> {
           if (data['status'] == "success") {
             User user = User.fromJson(data['data']);
             Timer(const Duration(seconds: 3), () {
-              Navigator.push(
+              Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                      builder: (content) => PropertyListPage(userdata: user)));
+                      builder: (content) => PropertiesPage(userdata: user)));
             });
           } else {
             Timer(

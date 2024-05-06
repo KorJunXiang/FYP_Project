@@ -5,7 +5,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:landlordy/models/user.dart';
 import 'package:landlordy/shared/myserverconfig.dart';
-import 'package:landlordy/views/propertylistpage.dart';
+import 'package:landlordy/views/propertiespage.dart';
 import 'package:landlordy/views/signuppage.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -49,18 +49,25 @@ class _LoginPageState extends State<LoginPage> {
       appBar: AppBar(
         title: const Text(
           'Login Page',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 30,
+          ),
         ),
         centerTitle: true,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
+        leading: GestureDetector(
+          onTap: () {
+            Navigator.of(context).pop();
           },
-          icon: const Icon(
-            Icons.arrow_back_rounded,
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Image.asset(
+              'assets/icons/back_icon.png',
+            ),
           ),
         ),
         backgroundColor: Colors.transparent,
+        foregroundColor: Colors.black,
       ),
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
@@ -88,16 +95,19 @@ class _LoginPageState extends State<LoginPage> {
                             style: TextStyle(
                               color: _isEmailValid ? Colors.black : Colors.red,
                             ),
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                                 labelText: 'Email',
-                                labelStyle: TextStyle(
+                                labelStyle: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                 ),
-                                icon: Icon(Icons.email_rounded),
-                                border: OutlineInputBorder(
+                                icon: Image.asset(
+                                  'assets/icons/email_icon.png',
+                                  scale: 15,
+                                ),
+                                border: const OutlineInputBorder(
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(10))),
-                                errorStyle: TextStyle(
+                                errorStyle: const TextStyle(
                                     color: Colors.red,
                                     fontWeight: FontWeight.bold,
                                     fontStyle: FontStyle.italic,
@@ -145,21 +155,29 @@ class _LoginPageState extends State<LoginPage> {
                                   labelStyle: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                   ),
-                                  icon: const Icon(Icons.lock),
+                                  icon: Image.asset(
+                                    'assets/icons/password_icon.png',
+                                    scale: 15,
+                                  ),
                                   border: const OutlineInputBorder(
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(10))),
                                   suffixIcon: IconButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          _passwordVisible = !_passwordVisible;
-                                        });
-                                      },
-                                      icon: Icon(
-                                        _passwordVisible
-                                            ? Icons.visibility
-                                            : Icons.visibility_off,
-                                      )),
+                                    onPressed: () {
+                                      setState(() {
+                                        _passwordVisible = !_passwordVisible;
+                                      });
+                                    },
+                                    icon: _passwordVisible
+                                        ? Image.asset(
+                                            'assets/icons/show_icon.png',
+                                            scale: 18,
+                                          )
+                                        : Image.asset(
+                                            'assets/icons/hide_icon.png',
+                                            scale: 18,
+                                          ),
+                                  ),
                                   errorStyle: const TextStyle(
                                       color: Colors.red,
                                       fontWeight: FontWeight.bold,
@@ -216,7 +234,9 @@ class _LoginPageState extends State<LoginPage> {
                             height: 10,
                           ),
                           ElevatedButton(
-                            onPressed: _loginUser,
+                            onPressed: () {
+                              loginUser();
+                            },
                             style: ElevatedButton.styleFrom(
                               fixedSize: Size(screenWidth * 0.35, 45),
                               backgroundColor: Colors.blue,
@@ -252,7 +272,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        Navigator.push(
+                        Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
                               builder: (context) => const SignUpPage(),
@@ -279,7 +299,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  void _loginUser() async {
+  void loginUser() async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
@@ -299,11 +319,14 @@ class _LoginPageState extends State<LoginPage> {
                 style: TextStyle(fontWeight: FontWeight.bold)),
             backgroundColor: Colors.green,
           ));
+          await prefs.setString('email', email);
+          await prefs.setString('password', password);
           await prefs.setBool('login', true);
-          Navigator.push(
+          Navigator.of(context).pop();
+          Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                  builder: (content) => PropertyListPage(userdata: user)));
+                  builder: (content) => PropertiesPage(userdata: user)));
         } else {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text("Login Failed",

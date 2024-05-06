@@ -16,7 +16,6 @@ class _WelcomePageState extends State<WelcomePage> {
   Widget build(BuildContext context) {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
-
     return Scaffold(
       body: Center(
         child: Stack(
@@ -68,14 +67,14 @@ class _WelcomePageState extends State<WelcomePage> {
                           borderRadius: BorderRadius.circular(20),
                         ),
                       ),
-                      icon: const Icon(
-                        Icons.login_rounded,
-                        color: Colors.white,
+                      icon: Image.asset(
+                        'assets/icons/login_icon.png',
+                        scale: 15,
                       ),
                       label: const Text(
                         'Login',
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 25,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
@@ -86,11 +85,11 @@ class _WelcomePageState extends State<WelcomePage> {
                     ),
                     ElevatedButton.icon(
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(
-                          builder: (context) {
-                            return const SignUpPage();
-                          },
-                        ));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const SignUpPage(),
+                            ));
                       },
                       style: ElevatedButton.styleFrom(
                         fixedSize: Size(screenWidth * 0.5, 50),
@@ -100,14 +99,14 @@ class _WelcomePageState extends State<WelcomePage> {
                           borderRadius: BorderRadius.circular(20),
                         ),
                       ),
-                      icon: const Icon(
-                        Icons.app_registration_rounded,
-                        color: Colors.white,
+                      icon: Image.asset(
+                        'assets/icons/signup_icon.png',
+                        scale: 15,
                       ),
                       label: const Text(
                         'Sign Up',
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 25,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),

@@ -46,18 +46,25 @@ class _SignUpPageState extends State<SignUpPage> {
       appBar: AppBar(
         title: const Text(
           'Sign Up Page',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 30,
+          ),
         ),
         centerTitle: true,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
+        leading: GestureDetector(
+          onTap: () {
+            Navigator.of(context).pop();
           },
-          icon: const Icon(
-            Icons.arrow_back_rounded,
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Image.asset(
+              'assets/icons/back_icon.png',
+            ),
           ),
         ),
         backgroundColor: Colors.transparent,
+        foregroundColor: Colors.black,
       ),
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
@@ -86,16 +93,19 @@ class _SignUpPageState extends State<SignUpPage> {
                               style: TextStyle(
                                 color: _isNameValid ? Colors.black : Colors.red,
                               ),
-                              decoration: const InputDecoration(
+                              decoration: InputDecoration(
                                 labelText: 'Full Name',
-                                labelStyle: TextStyle(
+                                labelStyle: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                 ),
-                                icon: Icon(Icons.person),
-                                border: OutlineInputBorder(
+                                icon: Image.asset(
+                                  'assets/icons/name_icon.png',
+                                  scale: 15,
+                                ),
+                                border: const OutlineInputBorder(
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(10))),
-                                errorStyle: TextStyle(
+                                errorStyle: const TextStyle(
                                     color: Colors.red,
                                     fontWeight: FontWeight.bold,
                                     fontStyle: FontStyle.italic,
@@ -125,16 +135,19 @@ class _SignUpPageState extends State<SignUpPage> {
                                 color:
                                     _isEmailValid ? Colors.black : Colors.red,
                               ),
-                              decoration: const InputDecoration(
+                              decoration: InputDecoration(
                                   labelText: 'Email',
-                                  labelStyle: TextStyle(
+                                  labelStyle: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                   ),
-                                  icon: Icon(Icons.email_rounded),
-                                  border: OutlineInputBorder(
+                                  icon: Image.asset(
+                                    'assets/icons/email_icon.png',
+                                    scale: 15,
+                                  ),
+                                  border: const OutlineInputBorder(
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(10))),
-                                  errorStyle: TextStyle(
+                                  errorStyle: const TextStyle(
                                       color: Colors.red,
                                       fontWeight: FontWeight.bold,
                                       fontStyle: FontStyle.italic,
@@ -173,22 +186,30 @@ class _SignUpPageState extends State<SignUpPage> {
                                     labelStyle: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                     ),
-                                    icon: const Icon(Icons.lock),
+                                    icon: Image.asset(
+                                      'assets/icons/password_icon.png',
+                                      scale: 15,
+                                    ),
                                     border: const OutlineInputBorder(
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(10))),
                                     suffixIcon: IconButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            _password1Visible =
-                                                !_password1Visible;
-                                          });
-                                        },
-                                        icon: Icon(
-                                          _password1Visible
-                                              ? Icons.visibility
-                                              : Icons.visibility_off,
-                                        )),
+                                      onPressed: () {
+                                        setState(() {
+                                          _password1Visible =
+                                              !_password1Visible;
+                                        });
+                                      },
+                                      icon: _password1Visible
+                                          ? Image.asset(
+                                              'assets/icons/show_icon.png',
+                                              scale: 18,
+                                            )
+                                          : Image.asset(
+                                              'assets/icons/hide_icon.png',
+                                              scale: 18,
+                                            ),
+                                    ),
                                     errorStyle: const TextStyle(
                                         color: Colors.red,
                                         fontWeight: FontWeight.bold,
@@ -212,22 +233,30 @@ class _SignUpPageState extends State<SignUpPage> {
                                     labelStyle: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                     ),
-                                    icon: const Icon(Icons.lock),
+                                    icon: Image.asset(
+                                      'assets/icons/password_icon.png',
+                                      scale: 15,
+                                    ),
                                     border: const OutlineInputBorder(
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(10))),
                                     suffixIcon: IconButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            _password2Visible =
-                                                !_password2Visible;
-                                          });
-                                        },
-                                        icon: Icon(
-                                          _password2Visible
-                                              ? Icons.visibility
-                                              : Icons.visibility_off,
-                                        )),
+                                      onPressed: () {
+                                        setState(() {
+                                          _password2Visible =
+                                              !_password2Visible;
+                                        });
+                                      },
+                                      icon: _password2Visible
+                                          ? Image.asset(
+                                              'assets/icons/show_icon.png',
+                                              scale: 18,
+                                            )
+                                          : Image.asset(
+                                              'assets/icons/hide_icon.png',
+                                              scale: 18,
+                                            ),
+                                    ),
                                     errorStyle: const TextStyle(
                                         color: Colors.red,
                                         fontWeight: FontWeight.bold,
@@ -237,8 +266,6 @@ class _SignUpPageState extends State<SignUpPage> {
                               height: 5,
                             ),
                             Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Checkbox(
                                     value: _isChecked,
@@ -250,68 +277,49 @@ class _SignUpPageState extends State<SignUpPage> {
                                         _isChecked = value!;
                                       });
                                     }),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const SizedBox(
-                                      height: 5,
-                                    ),
-                                    const Text(
-                                      'I have read and agree to the ',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 13,
-                                      ),
-                                    ),
-                                    GestureDetector(
-                                      onTap: _showEULA,
-                                      child: const Text(
-                                        'Privacy Policy',
-                                        style: TextStyle(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.bold,
-                                          decoration: TextDecoration.underline,
-                                          decorationColor:
-                                              Color.fromARGB(255, 1, 8, 220),
-                                          color: Color.fromARGB(255, 1, 8, 220),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                                const SizedBox(
+                                  height: 5,
                                 ),
-                                Column(
-                                  children: [
-                                    const SizedBox(
-                                      height: 5,
-                                    ),
-                                    GestureDetector(
-                                      onTap: _showEULA,
-                                      child: const Text(
-                                        'Term of Use',
-                                        style: TextStyle(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.bold,
-                                          decoration: TextDecoration.underline,
-                                          decorationColor:
-                                              Color.fromARGB(255, 1, 8, 220),
-                                          color: Color.fromARGB(255, 1, 8, 220),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                                const Text(
+                                  'I have read and agree to the ',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13,
+                                  ),
                                 ),
-                                const Column(
-                                  children: [
-                                    SizedBox(
-                                      height: 5,
+                                GestureDetector(
+                                  onTap: _showEULA,
+                                  child: const Text(
+                                    'Privacy Policy',
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      decoration: TextDecoration.underline,
+                                      decorationColor:
+                                          Color.fromARGB(255, 1, 8, 220),
+                                      color: Color.fromARGB(255, 1, 8, 220),
                                     ),
-                                    Text(
-                                      ' and',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                  ),
+                                ),
+                                const Text(
+                                  ' and ',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: _showEULA,
+                                  child: const Text(
+                                    'Term of Use',
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      decoration: TextDecoration.underline,
+                                      decorationColor:
+                                          Color.fromARGB(255, 1, 8, 220),
+                                      color: Color.fromARGB(255, 1, 8, 220),
                                     ),
-                                  ],
+                                  ),
                                 ),
                               ],
                             ),
@@ -354,7 +362,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        Navigator.push(
+                        Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
                               builder: (context) => const LoginPage(),
@@ -443,44 +451,82 @@ class _SignUpPageState extends State<SignUpPage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
+        return Dialog(
           shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(10))),
-          title: const Text(
-            "Register new account?",
-            style: TextStyle(
-                fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),
-          ),
-          content: const Text("Are you sure?",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-          actions: <Widget>[
-            TextButton(
-              child: const Text(
-                "Yes",
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-                _registerUser();
-              },
-            ),
-            TextButton(
-              child: const Text(
-                "No",
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  content: Text(
-                    "Registration Cancelled",
-                    style: TextStyle(fontWeight: FontWeight.bold),
+              side: BorderSide(color: Colors.black, width: 3),
+              borderRadius: BorderRadius.all(Radius.circular(10.0))),
+          child: Container(
+            width: MediaQuery.of(context).size.width * 0.8,
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  "Register New Account?",
+                  style: TextStyle(
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
                   ),
-                  backgroundColor: Colors.red,
-                ));
-              },
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        _registerUser();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        fixedSize: const Size(90, 40),
+                        backgroundColor: Colors.green,
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      child: const Text(
+                        'Yes',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(
+                          content: Text("Registration Cancelled",
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          backgroundColor: Colors.red,
+                        ));
+                      },
+                      style: ElevatedButton.styleFrom(
+                        fixedSize: const Size(90, 40),
+                        backgroundColor: Colors.red,
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      child: const Text(
+                        'No',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-          ],
+          ),
         );
       },
     );
@@ -558,7 +604,7 @@ class _SignUpPageState extends State<SignUpPage> {
             ),
             backgroundColor: Colors.green,
           ));
-          Navigator.push(context,
+          Navigator.pushReplacement(context,
               MaterialPageRoute(builder: (content) => const LoginPage()));
         } else {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
