@@ -1,6 +1,5 @@
-// ignore_for_file: avoid_print
-
 import 'dart:convert';
+import 'dart:developer';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:landlordy/insert_data/uploadpaymentpage.dart';
@@ -9,6 +8,7 @@ import 'package:landlordy/models/rentalpayment.dart';
 import 'package:landlordy/models/tenant.dart';
 import 'package:landlordy/models/user.dart';
 import 'package:landlordy/shared/myserverconfig.dart';
+import 'package:landlordy/views/paymentdetailpage.dart';
 
 class RentalMonthlyPage extends StatefulWidget {
   final User userdata;
@@ -30,9 +30,10 @@ class _RentalMonthlyPageState extends State<RentalMonthlyPage> {
       TextEditingController();
   late double screenWidth, screenHeight;
   bool isLoading = true;
-  final List<bool> _imageList = List<bool>.filled(12, false);
+  List<String> tenantList = List<String>.filled(12, "");
   List<RentalPayment> paymentList = <RentalPayment>[];
   List<int> yearIntList = [];
+  Set<int> uniqueYears = {};
   List<String> yearList = [];
   List<String> monthList = [
     "January",
@@ -304,11 +305,11 @@ class _RentalMonthlyPageState extends State<RentalMonthlyPage> {
                             style: const TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 22),
                           )),
-                      const Expanded(
+                      Expanded(
                           flex: 3,
                           child: Text(
-                            "Name",
-                            style: TextStyle(
+                            tenantList[index],
+                            style: const TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 22),
                           )),
                       Flexible(
@@ -321,7 +322,7 @@ class _RentalMonthlyPageState extends State<RentalMonthlyPage> {
                                   ? const CircularProgressIndicator(
                                       color: Colors.blue,
                                     )
-                                  : (_imageList[index] == true)
+                                  : (tenantList[index] != "")
                                       ? Image.asset(
                                           'assets/icons/tick_icon.png',
                                           scale: 18,
@@ -333,29 +334,97 @@ class _RentalMonthlyPageState extends State<RentalMonthlyPage> {
                               GestureDetector(
                                   onTap: () async {
                                     String year = _yearEditingController.text;
-                                    await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              UploadPaymentPage(
-                                            userdata: widget.userdata,
-                                            propertydetail:
-                                                widget.propertydetail,
-                                            tenantdetail: widget.tenantdetail,
-                                            month: monthList[index],
-                                            year: year,
-                                          ),
-                                        ));
-                                    loadYearListAndPaymentsAndImageList(year);
+                                    RentalPayment singlePayment =
+                                        paymentList.firstWhere(
+                                            (payment) =>
+                                                payment.month ==
+                                                    monthList[index] &&
+                                                payment.year == year,
+                                            orElse: () =>
+                                                RentalPayment(paymentId: null));
+                                    (widget.tenantdetail.tenantName
+                                                .toString() !=
+                                            "Not Available")
+                                        ? (tenantList[index] != "")
+                                            ? overwriteDialog(
+                                                monthList[index],
+                                                year,
+                                                singlePayment,
+                                              )
+                                            : {
+                                                await Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          UploadPaymentPage(
+                                                        userdata:
+                                                            widget.userdata,
+                                                        propertydetail: widget
+                                                            .propertydetail,
+                                                        tenantdetail:
+                                                            widget.tenantdetail,
+                                                        paymentdetail:
+                                                            singlePayment,
+                                                        month: monthList[index],
+                                                        year: year,
+                                                        reupload: false,
+                                                      ),
+                                                    )),
+                                                loadYearListAndPaymentsAndImageList(
+                                                    year)
+                                              }
+                                        : ScaffoldMessenger.of(context)
+                                            .showSnackBar(const SnackBar(
+                                            content: Text("No Tenant Detail",
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold)),
+                                            backgroundColor: Colors.red,
+                                          ));
                                   },
                                   child: Image.asset(
                                     'assets/icons/upload_icon.png',
                                     scale: 18,
                                   )),
                               GestureDetector(
-                                  onTap: () {
+                                  onTap: () async {
                                     String year = _yearEditingController.text;
-                                    loadYearListAndPaymentsAndImageList(year);
+                                    RentalPayment singlePayment =
+                                        paymentList.firstWhere(
+                                            (payment) =>
+                                                payment.month ==
+                                                    monthList[index] &&
+                                                payment.year == year,
+                                            orElse: () =>
+                                                RentalPayment(paymentId: null));
+                                    (tenantList[index] != "")
+                                        ? {
+                                            await Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      PaymentDetailPage(
+                                                    userdata: widget.userdata,
+                                                    propertydetail:
+                                                        widget.propertydetail,
+                                                    tenantdetail:
+                                                        widget.tenantdetail,
+                                                    paymentdetail:
+                                                        singlePayment,
+                                                  ),
+                                                )),
+                                            loadYearListAndPaymentsAndImageList(
+                                                year)
+                                          }
+                                        : ScaffoldMessenger.of(context)
+                                            .showSnackBar(const SnackBar(
+                                            content: Text(
+                                                "Payment Detail Not Available",
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold)),
+                                            backgroundColor: Colors.red,
+                                          ));
                                   },
                                   child: Image.asset(
                                     'assets/icons/next_icon.png',
@@ -372,50 +441,160 @@ class _RentalMonthlyPageState extends State<RentalMonthlyPage> {
     );
   }
 
+  void overwriteDialog(String month, String year, RentalPayment singlePayment) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: const RoundedRectangleBorder(
+              side: BorderSide(color: Colors.black, width: 3),
+              borderRadius: BorderRadius.all(Radius.circular(10.0))),
+          child: Container(
+            width: MediaQuery.of(context).size.width * 0.8,
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  "Re-Upload New Payment?",
+                  style: TextStyle(
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () async {
+                        Navigator.of(context).pop();
+                        await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => UploadPaymentPage(
+                                userdata: widget.userdata,
+                                propertydetail: widget.propertydetail,
+                                tenantdetail: widget.tenantdetail,
+                                paymentdetail: singlePayment,
+                                month: month,
+                                year: year,
+                                reupload: true,
+                              ),
+                            ));
+                        loadYearListAndPaymentsAndImageList(year);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        fixedSize: const Size(90, 40),
+                        backgroundColor: Colors.green,
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      child: const Text(
+                        'Yes',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        fixedSize: const Size(90, 40),
+                        backgroundColor: Colors.red,
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      child: const Text(
+                        'No',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Future<void> loadYearListAndPaymentsAndImageList(String year) async {
+    String originalYear = formatYear(widget.userdata.userdatereg.toString());
+    tenantList = List<String>.filled(12, "");
     setState(() {
       isLoading = true;
     });
-    String propertyid = widget.propertydetail.propertyId.toString();
-    int numofmonth = monthList.length;
+    final Map<String, int> monthMap = {
+      'January': 0,
+      'February': 1,
+      'March': 2,
+      'April': 3,
+      'May': 4,
+      'June': 5,
+      'July': 6,
+      'August': 7,
+      'September': 8,
+      'October': 9,
+      'November': 10,
+      'December': 11
+    };
+
     final responsePayments = await http.post(
         Uri.parse(
             "${MyServerConfig.server}/landlordy/php/rentalpayment/load_payment.php"),
         body: {
           "userid": widget.userdata.userid,
-          "propertyid": widget.propertydetail.propertyId
+          "propertyid": widget.propertydetail.propertyId,
         });
-    for (int i = 0; i < numofmonth; i++) {
-      String imageUrl =
-          "${MyServerConfig.server}/landlordy/assets/payments/${propertyid}_$year${monthList[i]}.png";
-      http.Response response = await http.get(Uri.parse(imageUrl));
-      if (response.statusCode == 200) {
-        _imageList[i] = true;
-      } else {
-        _imageList[i] = false;
-      }
-    }
-    // print(responsePayments.body);
+    log(responsePayments.body);
     if (responsePayments.statusCode == 200) {
       var jsondatapayment = jsonDecode(responsePayments.body);
       if (jsondatapayment['status'] == "success") {
         paymentList.clear();
         yearList.clear();
         yearIntList.clear();
-        yearList.add(year);
+
         jsondatapayment['data']['payments'].forEach((v) {
           paymentList.add(RentalPayment.fromJson(v));
-          yearIntList.add(int.parse(v['year']));
+          int paymentYear = int.parse(v['year']);
+          uniqueYears.add(paymentYear);
+          if (paymentYear == int.parse(year)) {
+            int monthIndex = monthMap[v['month']]!;
+            tenantList[monthIndex] = v['tenant_name'];
+          }
         });
+
+        yearIntList = uniqueYears.toList();
+        yearIntList.sort();
+        yearList.addAll(yearIntList.map((year) => year.toString()));
+
         int latestYear = yearIntList
             .reduce((current, next) => current > next ? current : next);
-        for (int i = 0; i < 2; i++) {
+        // log("LATEST YEAR: $latestYear");
+        for (int i = 1; i < 5; i++) {
           yearList.add((latestYear + i).toString());
         }
       } else {
         yearList.clear();
-        for (int i = 1; i < 2; i++) {
-          yearList.add((int.parse(year) + i).toString());
+        yearList.add(originalYear);
+        // log("ORIGINAL YEAR: $originalYear");
+        for (int i = 1; i < 5; i++) {
+          yearList.add((int.parse(originalYear) + i).toString());
         }
       }
       isLoading = false;

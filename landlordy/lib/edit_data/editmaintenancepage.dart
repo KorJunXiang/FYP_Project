@@ -31,11 +31,14 @@ class _EditMaintenancePageState extends State<EditMaintenancePage> {
       TextEditingController();
   final TextEditingController _costEditingController = TextEditingController();
   String tenantname = "";
+  String propertyid = "";
+  String tenantid = "";
   final _formKey = GlobalKey<FormState>();
   bool _isMaintenanceDescValid = true;
   bool _isCostValid = true;
   late double screenWidth, screenHeight;
   List<String> propertyname = [];
+  Set<String> uniquePropertyNames = {};
   List<String> maintenancetype = [
     'Plumbing',
     'Electrical',
@@ -62,10 +65,7 @@ class _EditMaintenancePageState extends State<EditMaintenancePage> {
     _costEditingController.text =
         widget.maintenancedetail.maintenanceCost.toString();
     tenantname = widget.maintenancedetail.tenantName.toString();
-    propertyname.clear();
-    for (PropertyTenant tenant in widget.propertytenant) {
-      propertyname.add(tenant.propertyName!);
-    }
+    populatePropertyNames();
   }
 
   @override
@@ -192,6 +192,8 @@ class _EditMaintenancePageState extends State<EditMaintenancePage> {
                                     in widget.propertytenant) {
                                   if (tenant.propertyName == newValue) {
                                     tenantname = tenant.currentTenant!;
+                                    propertyid = tenant.propertyId!;
+                                    tenantid = tenant.tenantId!;
                                     break;
                                   }
                                 }
@@ -414,6 +416,15 @@ class _EditMaintenancePageState extends State<EditMaintenancePage> {
     );
   }
 
+  void populatePropertyNames() {
+    propertyname.clear();
+    for (PropertyTenant tenant in widget.propertytenant) {
+      uniquePropertyNames.add(tenant.propertyName!);
+    }
+    propertyname = uniquePropertyNames.toList();
+    log("Property names populated: $propertyname");
+  }
+
   void updateDialog() {
     if (!_formKey.currentState!.validate()) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -511,7 +522,9 @@ class _EditMaintenancePageState extends State<EditMaintenancePage> {
         body: {
           "userid": widget.userdata.userid.toString(),
           "referenceid": widget.maintenancedetail.referenceId.toString(),
+          "propertyid": propertyid,
           "propertyname": propertyname,
+          "tenantid": tenantid,
           "tenantname": tenantname,
           "maintenancetype": maintenancetype,
           "maintenancedesc": maintenancedesc,

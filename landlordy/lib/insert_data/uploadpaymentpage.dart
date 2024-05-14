@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:landlordy/models/property.dart';
+import 'package:landlordy/models/rentalpayment.dart';
 import 'package:landlordy/models/tenant.dart';
 import 'package:landlordy/models/user.dart';
 import 'package:http/http.dart' as http;
@@ -15,14 +16,18 @@ class UploadPaymentPage extends StatefulWidget {
   final User userdata;
   final Property propertydetail;
   final Tenant tenantdetail;
+  final RentalPayment paymentdetail;
   final String month, year;
+  final bool reupload;
   const UploadPaymentPage({
     super.key,
     required this.userdata,
     required this.propertydetail,
     required this.tenantdetail,
+    required this.paymentdetail,
     required this.month,
     required this.year,
+    required this.reupload,
   });
 
   @override
@@ -36,6 +41,12 @@ class _UploadPaymentPageState extends State<UploadPaymentPage> {
   bool _isAmountValid = true;
   late double screenWidth, screenHeight;
   File? _image;
+
+  @override
+  void dispose() {
+    _amountEditingController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -457,7 +468,8 @@ class _UploadPaymentPageState extends State<UploadPaymentPage> {
                   children: [
                     ElevatedButton(
                       onPressed: () {
-                        uploadPayment();
+                        bool reupload = widget.reupload;
+                        (reupload) ? reUploadPayment() : uploadPayment();
                       },
                       style: ElevatedButton.styleFrom(
                         fixedSize: const Size(90, 40),
@@ -526,7 +538,55 @@ class _UploadPaymentPageState extends State<UploadPaymentPage> {
           "year": year,
           "image": image,
         }).then((response) {
-      print(response.body);
+      // print(response.body);
+      if (response.statusCode == 200) {
+        var jsondata = jsonDecode(response.body);
+        if (jsondata['status'] == 'success') {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text("Upload Success",
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            backgroundColor: Colors.green,
+          ));
+          Navigator.of(context).pop();
+          Navigator.of(context).pop();
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text("Upload Failed",
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            backgroundColor: Colors.red,
+          ));
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Upload Failed",
+              style: TextStyle(fontWeight: FontWeight.bold)),
+          backgroundColor: Colors.red,
+        ));
+      }
+    });
+  }
+
+  void reUploadPayment() {
+    String year = widget.year;
+    String month = widget.month;
+    String paymentamount = _amountEditingController.text;
+    String image = base64Encode(_image!.readAsBytesSync());
+    http.post(
+        Uri.parse(
+            "${MyServerConfig.server}/landlordy/php/rentalpayment/reupload_payment.php"),
+        body: {
+          "userid": widget.userdata.userid.toString(),
+          "paymentid": widget.paymentdetail.paymentId.toString(),
+          "propertyid": widget.propertydetail.propertyId.toString(),
+          "tenantid": widget.tenantdetail.tenantId.toString(),
+          "tenantname": widget.tenantdetail.tenantName.toString(),
+          "paymentamount": paymentamount,
+          "rentalprice": widget.propertydetail.rentalPrice.toString(),
+          "month": month,
+          "year": year,
+          "image": image,
+        }).then((response) {
+      // print(response.body);
       if (response.statusCode == 200) {
         var jsondata = jsonDecode(response.body);
         if (jsondata['status'] == 'success') {

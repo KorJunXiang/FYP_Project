@@ -28,6 +28,7 @@ class _AddMaintenancePageState extends State<AddMaintenancePage> {
   bool _isMaintenanceDescValid = true;
   bool _isCostValid = true;
   late double screenWidth, screenHeight;
+  Set<String> uniquePropertyNames = {};
   List<String> propertyname = [];
   List<String> maintenancetype = [
     'Plumbing',
@@ -43,14 +44,13 @@ class _AddMaintenancePageState extends State<AddMaintenancePage> {
     'Structural Repairs'
   ];
   late String tenantname;
+  late String propertyid;
+  late String tenantid;
 
   @override
   void initState() {
     super.initState();
-    propertyname.clear();
-    for (PropertyTenant tenant in widget.propertytenant) {
-      propertyname.add(tenant.propertyName!);
-    }
+    populatePropertyNames();
   }
 
   @override
@@ -159,6 +159,8 @@ class _AddMaintenancePageState extends State<AddMaintenancePage> {
                                     in widget.propertytenant) {
                                   if (tenant.propertyName == newValue) {
                                     tenantname = tenant.currentTenant!;
+                                    propertyid = tenant.propertyId!;
+                                    tenantid = tenant.tenantId!;
                                     break;
                                   }
                                 }
@@ -381,6 +383,15 @@ class _AddMaintenancePageState extends State<AddMaintenancePage> {
     );
   }
 
+  void populatePropertyNames() {
+    propertyname.clear();
+    for (PropertyTenant tenant in widget.propertytenant) {
+      uniquePropertyNames.add(tenant.propertyName!);
+    }
+    propertyname = uniquePropertyNames.toList();
+    log("Property names populated: $propertyname");
+  }
+
   void insertDialog() {
     if (!_formKey.currentState!.validate()) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -477,7 +488,9 @@ class _AddMaintenancePageState extends State<AddMaintenancePage> {
             "${MyServerConfig.server}/landlordy/php/maintenance/insert_maintenance.php"),
         body: {
           "userid": widget.userdata.userid.toString(),
+          "propertyid": propertyid,
           "propertyname": propertyname,
+          "tenantid": tenantid,
           "tenantname": tenantname,
           "maintenancetype": maintenancetype,
           "maintenancedesc": maintenancedesc,

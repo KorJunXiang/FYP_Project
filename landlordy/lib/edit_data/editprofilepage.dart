@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
@@ -330,7 +329,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       _image = File(pickedFile.path);
       cropImage();
     } else {
-      print('No image selected.');
+      log('No image selected.');
     }
   }
 
@@ -346,7 +345,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       _image = File(pickedFile.path);
       cropImage();
     } else {
-      print('No image selected.');
+      log('No image selected.');
     }
   }
 
@@ -478,7 +477,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
       image = "null";
     }
     http.post(
-        Uri.parse("${MyServerConfig.server}/landlordy/php/user/edit_user.php"),
+        Uri.parse(
+            "${MyServerConfig.server}/landlordy/php/user/update_user.php"),
         body: {
           "userid": widget.userdata.userid.toString(),
           "username": username,

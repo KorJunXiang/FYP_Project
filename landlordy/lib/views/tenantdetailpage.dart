@@ -339,6 +339,42 @@ class _TenantDetailPageState extends State<TenantDetailPage> {
                                 margin: const EdgeInsets.fromLTRB(5, 0, 15, 0),
                                 child: const Image(
                                   image: AssetImage(
+                                    'assets/icons/property_name_icon.png',
+                                  ),
+                                  fit: BoxFit.scaleDown,
+                                ),
+                              )),
+                          const TableCell(
+                              verticalAlignment:
+                                  TableCellVerticalAlignment.middle,
+                              child: Text(
+                                "Latest Property",
+                                style: TextStyle(
+                                    fontSize: 25, fontWeight: FontWeight.w900),
+                              )),
+                          TableCell(
+                            verticalAlignment:
+                                TableCellVerticalAlignment.middle,
+                            child: Text(
+                              widget.tenantdetail.latestProperty.toString(),
+                              style: const TextStyle(
+                                  fontSize: 22, fontWeight: FontWeight.w500),
+                            ),
+                          )
+                        ]),
+                        const TableRow(children: [
+                          TableCell(child: SizedBox(height: 20)),
+                          TableCell(child: SizedBox(height: 20)),
+                          TableCell(child: SizedBox(height: 20))
+                        ]),
+                        TableRow(children: [
+                          TableCell(
+                              verticalAlignment:
+                                  TableCellVerticalAlignment.middle,
+                              child: Container(
+                                margin: const EdgeInsets.fromLTRB(5, 0, 15, 0),
+                                child: const Image(
+                                  image: AssetImage(
                                     'assets/icons/rental_status_icon.png',
                                   ),
                                   fit: BoxFit.scaleDown,

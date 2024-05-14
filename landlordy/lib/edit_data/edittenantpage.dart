@@ -21,6 +21,8 @@ class _EditTenantPageState extends State<EditTenantPage> {
       TextEditingController();
   final TextEditingController _tenantnameEditingController =
       TextEditingController();
+  final TextEditingController _latestpropertyEditingController =
+      TextEditingController();
   final TextEditingController _emailEditingController = TextEditingController();
   final TextEditingController _genderEditingController =
       TextEditingController();
@@ -32,6 +34,7 @@ class _EditTenantPageState extends State<EditTenantPage> {
   final _formKey = GlobalKey<FormState>();
   bool _isRentalPriceValid = true;
   bool _isTenantNameValid = true;
+  bool _isLatestPropertyValid = true;
   bool _isEmailValid = true;
   bool _isAgeValid = true;
   bool _isPhoneValid = true;
@@ -41,6 +44,8 @@ class _EditTenantPageState extends State<EditTenantPage> {
   @override
   void initState() {
     super.initState();
+    _latestpropertyEditingController.text =
+        widget.tenantdetail.latestProperty.toString();
     _rentalpriceEditingController.text =
         widget.tenantdetail.rentalPrice.toString();
     _tenantnameEditingController.text =
@@ -55,6 +60,7 @@ class _EditTenantPageState extends State<EditTenantPage> {
 
   @override
   void dispose() {
+    _latestpropertyEditingController.dispose();
     _rentalpriceEditingController.dispose();
     _tenantnameEditingController.dispose();
     _emailEditingController.dispose();
@@ -382,6 +388,51 @@ class _EditTenantPageState extends State<EditTenantPage> {
                               } else {
                                 setState(() {
                                   _isPhoneValid = true;
+                                });
+                                return null;
+                              }
+                            },
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          TextFormField(
+                            enabled: false,
+                            controller: _latestpropertyEditingController,
+                            keyboardType: TextInputType.text,
+                            style: TextStyle(
+                              color: _isLatestPropertyValid
+                                  ? Colors.black
+                                  : Colors.red,
+                            ),
+                            decoration: InputDecoration(
+                              labelText: 'Latest Property',
+                              labelStyle: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                              icon: Image.asset(
+                                'assets/icons/property_name_icon.png',
+                                scale: 22,
+                                alignment: Alignment.centerLeft,
+                              ),
+                              border: const OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10))),
+                              errorStyle: const TextStyle(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.bold,
+                                  fontStyle: FontStyle.italic,
+                                  fontSize: 16),
+                            ),
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                setState(() {
+                                  _isLatestPropertyValid = false;
+                                });
+                                return "Enter Latest Property";
+                              } else {
+                                setState(() {
+                                  _isLatestPropertyValid = true;
                                 });
                                 return null;
                               }

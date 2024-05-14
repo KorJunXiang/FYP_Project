@@ -7,6 +7,7 @@ class Tenant {
   String? tenantAge;
   String? tenantCategory;
   String? tenantPhone;
+  String? latestProperty;
   String? rentalStatus;
   String? rentalPrice;
 
@@ -19,6 +20,7 @@ class Tenant {
       this.tenantAge,
       this.tenantCategory,
       this.tenantPhone,
+      this.latestProperty,
       this.rentalStatus,
       this.rentalPrice});
 
@@ -31,6 +33,7 @@ class Tenant {
     tenantAge = json['tenant_age'];
     tenantCategory = json['tenant_category'];
     tenantPhone = json['tenant_phone'];
+    latestProperty = json['latest_property'];
     rentalStatus = json['rental_status'];
     rentalPrice = json['rental_price'];
   }
@@ -45,6 +48,7 @@ class Tenant {
     data['tenant_age'] = tenantAge;
     data['tenant_category'] = tenantCategory;
     data['tenant_phone'] = tenantPhone;
+    data['latest_property'] = latestProperty;
     data['rental_status'] = rentalStatus;
     data['rental_price'] = rentalPrice;
     return data;
