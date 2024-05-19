@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:landlordy/models/property.dart';
 import 'package:landlordy/models/rentalpayment.dart';
@@ -309,7 +310,7 @@ class _EditPaymentPageState extends State<EditPaymentPage> {
   }
 
   void _selectImageDialog() {
-    showDialog(
+    showCupertinoModalPopup(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -462,7 +463,7 @@ class _EditPaymentPageState extends State<EditPaymentPage> {
       ));
       return;
     }
-    showDialog(
+    showCupertinoModalPopup(
       context: context,
       builder: (BuildContext context) {
         return Dialog(
@@ -586,7 +587,7 @@ class _EditPaymentPageState extends State<EditPaymentPage> {
   }
 
   void cancelDialog() {
-    showDialog(
+    showCupertinoModalPopup(
       context: context,
       builder: (BuildContext context) {
         return Dialog(

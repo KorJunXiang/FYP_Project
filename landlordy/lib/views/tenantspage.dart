@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:landlordy/insert_data/addpropertypage.dart';
@@ -96,20 +97,45 @@ class _TenantsPageState extends State<TenantsPage> {
                 ? Column(
                     children: [
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          GestureDetector(
-                            onTap: () {
-                              showSearchDialog();
-                            },
+                          Card(
+                            elevation: 4,
+                            margin: const EdgeInsets.symmetric(horizontal: 10),
+                            color: Theme.of(context).colorScheme.primary,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
                             child: Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: Image.asset(
-                                'assets/icons/search_icon.png',
-                                scale: 18,
+                              padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+                              child: Text(
+                                "${tenantList.length} Records",
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
                           ),
+                          Expanded(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    showSearchDialog();
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10),
+                                    child: Image.asset(
+                                      'assets/icons/search_icon.png',
+                                      scale: 18,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
                         ],
                       ),
                       Expanded(
@@ -182,20 +208,45 @@ class _TenantsPageState extends State<TenantsPage> {
                 : Column(
                     children: [
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          GestureDetector(
-                            onTap: () {
-                              showSearchDialog();
-                            },
+                          Card(
+                            elevation: 4,
+                            margin: const EdgeInsets.symmetric(horizontal: 10),
+                            color: Theme.of(context).colorScheme.primary,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
                             child: Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: Image.asset(
-                                'assets/icons/search_icon.png',
-                                scale: 18,
+                              padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+                              child: Text(
+                                "${tenantList.length} Records",
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
                           ),
+                          Expanded(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    showSearchDialog();
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10),
+                                    child: Image.asset(
+                                      'assets/icons/search_icon.png',
+                                      scale: 18,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
                         ],
                       ),
                       Container(
@@ -335,7 +386,7 @@ class _TenantsPageState extends State<TenantsPage> {
 
   void showSearchDialog() {
     TextEditingController searchController = TextEditingController();
-    showDialog(
+    showCupertinoModalPopup(
       context: context,
       builder: (BuildContext context) {
         return Dialog(

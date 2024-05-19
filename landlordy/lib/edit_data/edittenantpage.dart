@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:landlordy/models/tenant.dart';
@@ -534,7 +535,7 @@ class _EditTenantPageState extends State<EditTenantPage> {
       ));
       return;
     }
-    showDialog(
+    showCupertinoModalPopup(
       context: context,
       builder: (BuildContext context) {
         return Dialog(
@@ -662,7 +663,7 @@ class _EditTenantPageState extends State<EditTenantPage> {
   }
 
   void cancelDialog() {
-    showDialog(
+    showCupertinoModalPopup(
       context: context,
       builder: (BuildContext context) {
         return Dialog(

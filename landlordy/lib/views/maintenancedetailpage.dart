@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:landlordy/edit_data/editmaintenancepage.dart';
 import 'package:landlordy/models/maintenance.dart';
@@ -238,7 +239,7 @@ class _MaintenanceDetailPageState extends State<MaintenanceDetailPage> {
   }
 
   void deleteDialog() {
-    showDialog(
+    showCupertinoModalPopup(
       context: context,
       builder: (BuildContext context) {
         return Dialog(

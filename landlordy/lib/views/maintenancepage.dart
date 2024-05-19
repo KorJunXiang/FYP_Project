@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:landlordy/insert_data/addmaintenancepage.dart';
 import 'package:landlordy/insert_data/addpropertypage.dart';
@@ -121,39 +122,68 @@ class _MaintenancePageState extends State<MaintenancePage> {
                       ? Column(
                           children: [
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    showSearchDialog();
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(10),
-                                    child: Image.asset(
-                                      'assets/icons/search_icon.png',
-                                      scale: 18,
-                                    ),
+                                Card(
+                                  elevation: 4,
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 10),
+                                  color: Theme.of(context).colorScheme.primary,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
                                   ),
-                                ),
-                                GestureDetector(
-                                  onTap: () async {
-                                    await Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => AddPropertyPage(
-                                            userdata: widget.userdata),
+                                  child: Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(10, 5, 10, 5),
+                                    child: Text(
+                                      "${maintenanceList.length} Records",
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20,
+                                        color: Colors.white,
                                       ),
-                                    );
-                                    loadPropertiesAndMaintenances();
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(10),
-                                    child: Image.asset(
-                                      'assets/icons/add_icon.png',
-                                      scale: 18,
                                     ),
                                   ),
                                 ),
+                                Expanded(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () {
+                                          showSearchDialog();
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(10),
+                                          child: Image.asset(
+                                            'assets/icons/search_icon.png',
+                                            scale: 18,
+                                          ),
+                                        ),
+                                      ),
+                                      GestureDetector(
+                                        onTap: () async {
+                                          await Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  AddPropertyPage(
+                                                      userdata:
+                                                          widget.userdata),
+                                            ),
+                                          );
+                                          loadPropertiesAndMaintenances();
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(10),
+                                          child: Image.asset(
+                                            'assets/icons/add_icon.png',
+                                            scale: 18,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
                               ],
                             ),
                             Expanded(
@@ -233,40 +263,70 @@ class _MaintenancePageState extends State<MaintenancePage> {
                           ? Column(
                               children: [
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        showSearchDialog();
-                                      },
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(10),
-                                        child: Image.asset(
-                                          'assets/icons/search_icon.png',
-                                          scale: 18,
-                                        ),
+                                    Card(
+                                      elevation: 4,
+                                      margin: const EdgeInsets.symmetric(
+                                          horizontal: 10),
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
                                       ),
-                                    ),
-                                    GestureDetector(
-                                      onTap: () async {
-                                        await Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                AddPropertyPage(
-                                                    userdata: widget.userdata),
+                                      child: Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            10, 5, 10, 5),
+                                        child: Text(
+                                          "${maintenanceList.length} Records",
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20,
+                                            color: Colors.white,
                                           ),
-                                        );
-                                        loadPropertiesAndMaintenances();
-                                      },
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(10),
-                                        child: Image.asset(
-                                          'assets/icons/add_icon.png',
-                                          scale: 18,
                                         ),
                                       ),
                                     ),
+                                    Expanded(
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          GestureDetector(
+                                            onTap: () {
+                                              showSearchDialog();
+                                            },
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(10),
+                                              child: Image.asset(
+                                                'assets/icons/search_icon.png',
+                                                scale: 18,
+                                              ),
+                                            ),
+                                          ),
+                                          GestureDetector(
+                                            onTap: () async {
+                                              await Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      AddPropertyPage(
+                                                          userdata:
+                                                              widget.userdata),
+                                                ),
+                                              );
+                                              loadPropertiesAndMaintenances();
+                                            },
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(10),
+                                              child: Image.asset(
+                                                'assets/icons/add_icon.png',
+                                                scale: 18,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    )
                                   ],
                                 ),
                                 Expanded(
@@ -352,42 +412,74 @@ class _MaintenancePageState extends State<MaintenancePage> {
                               ? Column(
                                   children: [
                                     Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
                                       children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            showSearchDialog();
-                                          },
+                                        Card(
+                                          elevation: 4,
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 10),
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
                                           child: Padding(
-                                            padding: const EdgeInsets.all(10),
-                                            child: Image.asset(
-                                              'assets/icons/search_icon.png',
-                                              scale: 18,
+                                            padding: const EdgeInsets.fromLTRB(
+                                                10, 5, 10, 5),
+                                            child: Text(
+                                              "${maintenanceList.length} Records",
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 20,
+                                                color: Colors.white,
+                                              ),
                                             ),
                                           ),
                                         ),
-                                        GestureDetector(
-                                          onTap: () async {
-                                            await Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      AddMaintenancePage(
-                                                    userdata: widget.userdata,
-                                                    propertytenant:
-                                                        propertytenant,
+                                        Expanded(
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: [
+                                              GestureDetector(
+                                                onTap: () {
+                                                  showSearchDialog();
+                                                },
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(10),
+                                                  child: Image.asset(
+                                                    'assets/icons/search_icon.png',
+                                                    scale: 18,
                                                   ),
-                                                ));
-                                            loadPropertiesAndMaintenances();
-                                          },
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(10),
-                                            child: Image.asset(
-                                              'assets/icons/add_icon.png',
-                                              scale: 18,
-                                            ),
+                                                ),
+                                              ),
+                                              GestureDetector(
+                                                onTap: () async {
+                                                  await Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          AddPropertyPage(
+                                                              userdata: widget
+                                                                  .userdata),
+                                                    ),
+                                                  );
+                                                  loadPropertiesAndMaintenances();
+                                                },
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(10),
+                                                  child: Image.asset(
+                                                    'assets/icons/add_icon.png',
+                                                    scale: 18,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                        ),
+                                        )
                                       ],
                                     ),
                                     Expanded(
@@ -480,42 +572,74 @@ class _MaintenancePageState extends State<MaintenancePage> {
                               : Column(
                                   children: [
                                     Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
                                       children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            showSearchDialog();
-                                          },
+                                        Card(
+                                          elevation: 4,
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 10),
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
                                           child: Padding(
-                                            padding: const EdgeInsets.all(10),
-                                            child: Image.asset(
-                                              'assets/icons/search_icon.png',
-                                              scale: 18,
+                                            padding: const EdgeInsets.fromLTRB(
+                                                10, 5, 10, 5),
+                                            child: Text(
+                                              "${maintenanceList.length} Records",
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 20,
+                                                color: Colors.white,
+                                              ),
                                             ),
                                           ),
                                         ),
-                                        GestureDetector(
-                                          onTap: () async {
-                                            await Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      AddMaintenancePage(
-                                                    userdata: widget.userdata,
-                                                    propertytenant:
-                                                        propertytenant,
+                                        Expanded(
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: [
+                                              GestureDetector(
+                                                onTap: () {
+                                                  showSearchDialog();
+                                                },
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(10),
+                                                  child: Image.asset(
+                                                    'assets/icons/search_icon.png',
+                                                    scale: 18,
                                                   ),
-                                                ));
-                                            loadPropertiesAndMaintenances();
-                                          },
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(10),
-                                            child: Image.asset(
-                                              'assets/icons/add_icon.png',
-                                              scale: 18,
-                                            ),
+                                                ),
+                                              ),
+                                              GestureDetector(
+                                                onTap: () async {
+                                                  await Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          AddPropertyPage(
+                                                              userdata: widget
+                                                                  .userdata),
+                                                    ),
+                                                  );
+                                                  loadPropertiesAndMaintenances();
+                                                },
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(10),
+                                                  child: Image.asset(
+                                                    'assets/icons/add_icon.png',
+                                                    scale: 18,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                        ),
+                                        )
                                       ],
                                     ),
                                     Container(
@@ -641,7 +765,7 @@ class _MaintenancePageState extends State<MaintenancePage> {
 
   void showSearchDialog() {
     TextEditingController searchController = TextEditingController();
-    showDialog(
+    showCupertinoModalPopup(
       context: context,
       builder: (BuildContext context) {
         return Dialog(

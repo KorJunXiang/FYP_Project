@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:landlordy/edit_data/editpropertypage.dart';
 import 'package:landlordy/models/property.dart';
@@ -614,7 +615,7 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
   }
 
   void deleteDialog() {
-    showDialog(
+    showCupertinoModalPopup(
       context: context,
       builder: (BuildContext context) {
         return Dialog(

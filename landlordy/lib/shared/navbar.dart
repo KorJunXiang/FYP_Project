@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:landlordy/models/user.dart';
 import 'package:landlordy/shared/myserverconfig.dart';
@@ -287,7 +288,7 @@ class _NavBarState extends State<NavBar> {
   }
 
   void logoutDialog() {
-    showDialog(
+    showCupertinoModalPopup(
       context: context,
       builder: (BuildContext context) {
         return Dialog(

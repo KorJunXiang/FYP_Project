@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
@@ -824,7 +825,7 @@ class _EditPropertyPageState extends State<EditPropertyPage> {
   }
 
   void _selectImageDialog(int num) {
-    showDialog(
+    showCupertinoModalPopup(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -957,7 +958,7 @@ class _EditPropertyPageState extends State<EditPropertyPage> {
       ));
       return;
     }
-    showDialog(
+    showCupertinoModalPopup(
       context: context,
       builder: (BuildContext context) {
         return Dialog(
@@ -1172,7 +1173,7 @@ class _EditPropertyPageState extends State<EditPropertyPage> {
   }
 
   void cancelDialog() {
-    showDialog(
+    showCupertinoModalPopup(
       context: context,
       builder: (BuildContext context) {
         return Dialog(

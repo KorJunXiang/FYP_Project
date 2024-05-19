@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:landlordy/insert_data/uploadpaymentpage.dart';
@@ -442,7 +443,7 @@ class _RentalMonthlyPageState extends State<RentalMonthlyPage> {
   }
 
   void overwriteDialog(String month, String year, RentalPayment singlePayment) {
-    showDialog(
+    showCupertinoModalPopup(
       context: context,
       builder: (BuildContext context) {
         return Dialog(

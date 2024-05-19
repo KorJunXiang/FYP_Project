@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:landlordy/shared/myserverconfig.dart';
@@ -448,7 +449,7 @@ class _SignUpPageState extends State<SignUpPage> {
       ));
       return;
     }
-    showDialog(
+    showCupertinoModalPopup(
       context: context,
       builder: (BuildContext context) {
         return Dialog(
@@ -538,7 +539,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
   void _showEULA() {
     loadEula();
-    showDialog(
+    showCupertinoModalPopup(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(

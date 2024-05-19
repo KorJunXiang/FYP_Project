@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:landlordy/edit_data/editpaymentpage.dart';
 import 'package:landlordy/models/property.dart';
@@ -216,7 +217,7 @@ class _PaymentDetailPageState extends State<PaymentDetailPage> {
   }
 
   void deleteDialog() {
-    showDialog(
+    showCupertinoModalPopup(
       context: context,
       builder: (BuildContext context) {
         return Dialog(
