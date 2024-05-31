@@ -1,10 +1,12 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, unused_local_variable, unused_import
 
 import 'dart:convert';
 
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:landlordy/models/user.dart';
 import 'package:landlordy/shared/myserverconfig.dart';
+import 'package:landlordy/views/passwordforgotpage.dart';
 import 'package:landlordy/views/propertiespage.dart';
 import 'package:landlordy/views/signuppage.dart';
 import 'package:http/http.dart' as http;
@@ -224,7 +226,14 @@ class _LoginPageState extends State<LoginPage> {
                                         color: Color.fromARGB(255, 1, 8, 220),
                                       ),
                                     ),
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                const PasswordForgotPage(),
+                                          ));
+                                    },
                                   ),
                                 ),
                               ),
@@ -234,9 +243,7 @@ class _LoginPageState extends State<LoginPage> {
                             height: 10,
                           ),
                           ElevatedButton(
-                            onPressed: () {
-                              loginUser();
-                            },
+                            onPressed: loginUser,
                             style: ElevatedButton.styleFrom(
                               fixedSize: Size(screenWidth * 0.35, 45),
                               backgroundColor: Colors.blue,
@@ -301,6 +308,14 @@ class _LoginPageState extends State<LoginPage> {
 
   void loginUser() async {
     if (!_formKey.currentState!.validate()) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text(
+          'Check your input',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.red,
+        duration: Duration(seconds: 2),
+      ));
       return;
     }
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -310,15 +325,34 @@ class _LoginPageState extends State<LoginPage> {
     http.post(
         Uri.parse("${MyServerConfig.server}/landlordy/php/user/login_user.php"),
         body: {"email": email, "password": password}).then((response) async {
+      // log(response.body);
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         if (data['status'] == "success") {
           User user = User.fromJson(data['data']);
+          if (user.status == 'Inactive') {
+            final response = await http.post(
+                Uri.parse(
+                    "${MyServerConfig.server}/landlordy/php/user/register_user.php"),
+                body: {"name": user.username, "email": email});
+            // log(response.body);
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text(
+                "Email Not Authorized\nPlease Check Your Email Again",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              backgroundColor: Colors.red,
+              duration: Duration(seconds: 2),
+            ));
+            return;
+          }
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text("Login Success",
                 style: TextStyle(fontWeight: FontWeight.bold)),
             backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
           ));
+
           await prefs.setString('email', email);
           await prefs.setString('password', password);
           await prefs.setBool('login', true);
@@ -328,10 +362,12 @@ class _LoginPageState extends State<LoginPage> {
               MaterialPageRoute(
                   builder: (content) => PropertiesPage(userdata: user)));
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text("Login Failed",
-                style: TextStyle(fontWeight: FontWeight.bold)),
+          String message = data['message'];
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(message,
+                style: const TextStyle(fontWeight: FontWeight.bold)),
             backgroundColor: Colors.red,
+            duration: const Duration(seconds: 2),
           ));
         }
       }
@@ -350,6 +386,7 @@ class _LoginPageState extends State<LoginPage> {
         content: Text("Preferences Stored",
             style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: Colors.green,
+        duration: Duration(seconds: 2),
       ));
     } else {
       await prefs.setString('email', '');
@@ -361,6 +398,7 @@ class _LoginPageState extends State<LoginPage> {
         content: Text("Preferences Removed",
             style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: Colors.red,
+        duration: Duration(seconds: 2),
       ));
     }
   }

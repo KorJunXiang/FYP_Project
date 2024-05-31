@@ -12,6 +12,7 @@ import 'package:landlordy/models/user.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:landlordy/shared/loadingindicatorwidget.dart';
 import 'package:landlordy/shared/myserverconfig.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -62,7 +63,7 @@ class _EditPaymentPageState extends State<EditPaymentPage> {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: Colors.lightBlue.shade100,
+      backgroundColor: Colors.blue.shade100,
       appBar: AppBar(
         title: const Text(
           'Edit Payment',
@@ -110,12 +111,10 @@ class _EditPaymentPageState extends State<EditPaymentPage> {
                         child: _image != null
                             ? Ink.image(
                                 image: FileImage(_image!),
-                                fit: BoxFit.fitHeight,
+                                fit: BoxFit.scaleDown,
                               )
                             : const Center(
-                                child: CircularProgressIndicator(
-                                  color: Colors.blue,
-                                ),
+                                child: LoadingIndicatorWidget(type: 1),
                               )),
                   ),
                 ),
@@ -452,6 +451,7 @@ class _EditPaymentPageState extends State<EditPaymentPage> {
         content: Text("Check your input",
             style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: Colors.red,
+        duration: Duration(seconds: 2),
       ));
       return;
     }
@@ -460,6 +460,7 @@ class _EditPaymentPageState extends State<EditPaymentPage> {
         content: Text("Please take picture",
             style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: Colors.red,
+        duration: Duration(seconds: 2),
       ));
       return;
     }
@@ -565,6 +566,7 @@ class _EditPaymentPageState extends State<EditPaymentPage> {
             content: Text("Update Success",
                 style: TextStyle(fontWeight: FontWeight.bold)),
             backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
           ));
           Navigator.of(context).pop();
           Navigator.of(context).pop();
@@ -574,6 +576,7 @@ class _EditPaymentPageState extends State<EditPaymentPage> {
             content: Text("Update Failed",
                 style: TextStyle(fontWeight: FontWeight.bold)),
             backgroundColor: Colors.red,
+            duration: Duration(seconds: 2),
           ));
         }
       } else {
@@ -581,6 +584,7 @@ class _EditPaymentPageState extends State<EditPaymentPage> {
           content: Text("Update Failed",
               style: TextStyle(fontWeight: FontWeight.bold)),
           backgroundColor: Colors.red,
+          duration: Duration(seconds: 2),
         ));
       }
     });

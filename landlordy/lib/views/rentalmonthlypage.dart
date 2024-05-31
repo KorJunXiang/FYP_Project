@@ -1,5 +1,7 @@
 import 'dart:convert';
+// ignore: unused_import
 import 'dart:developer';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -8,6 +10,7 @@ import 'package:landlordy/models/property.dart';
 import 'package:landlordy/models/rentalpayment.dart';
 import 'package:landlordy/models/tenant.dart';
 import 'package:landlordy/models/user.dart';
+import 'package:landlordy/shared/loadingindicatorwidget.dart';
 import 'package:landlordy/shared/myserverconfig.dart';
 import 'package:landlordy/views/paymentdetailpage.dart';
 
@@ -31,6 +34,7 @@ class _RentalMonthlyPageState extends State<RentalMonthlyPage> {
       TextEditingController();
   late double screenWidth, screenHeight;
   bool isLoading = true;
+  bool _isYearValid = true;
   List<String> tenantList = List<String>.filled(12, "");
   List<RentalPayment> paymentList = <RentalPayment>[];
   List<int> yearIntList = [];
@@ -109,14 +113,9 @@ class _RentalMonthlyPageState extends State<RentalMonthlyPage> {
                       if (loadingProgress == null) {
                         return child;
                       } else {
-                        double progress =
-                            loadingProgress.cumulativeBytesLoaded /
-                                (loadingProgress.expectedTotalBytes ?? 1);
-                        return Center(
-                            child: CircularProgressIndicator(
-                          value: progress,
-                          color: Colors.blue,
-                        ));
+                        return const Center(
+                          child: LoadingIndicatorWidget(type: 2),
+                        );
                       }
                     },
                   ),
@@ -133,10 +132,13 @@ class _RentalMonthlyPageState extends State<RentalMonthlyPage> {
                             scale: 20,
                           ),
                           const SizedBox(width: 5),
-                          Text(
-                            "${widget.propertydetail.propertyName}",
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 18),
+                          Flexible(
+                            child: Text(
+                              "${widget.propertydetail.propertyName}",
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 18),
+                              softWrap: true,
+                            ),
                           ),
                         ],
                       ),
@@ -148,10 +150,13 @@ class _RentalMonthlyPageState extends State<RentalMonthlyPage> {
                             scale: 20,
                           ),
                           const SizedBox(width: 5),
-                          Text(
-                            "${widget.tenantdetail.tenantName}",
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 18),
+                          Flexible(
+                            child: Text(
+                              "${widget.tenantdetail.tenantName}",
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 18),
+                              softWrap: true,
+                            ),
                           ),
                         ],
                       )
@@ -170,10 +175,13 @@ class _RentalMonthlyPageState extends State<RentalMonthlyPage> {
                             scale: 20,
                           ),
                           const SizedBox(width: 5),
-                          Text(
-                            "RM${widget.propertydetail.rentalPrice}",
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 18),
+                          Flexible(
+                            child: Text(
+                              "RM${widget.propertydetail.rentalPrice}",
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 18),
+                              softWrap: true,
+                            ),
                           ),
                         ],
                       )
@@ -189,36 +197,68 @@ class _RentalMonthlyPageState extends State<RentalMonthlyPage> {
               children: [
                 Image.asset(
                   'assets/icons/year_icon.png',
-                  scale: 15,
+                  scale: 10,
                   alignment: Alignment.centerLeft,
                 ),
+                const SizedBox(width: 5),
                 SizedBox(
                   width: screenWidth * 0.4,
-                  child: DropdownMenu<String>(
-                    menuHeight: 200,
-                    expandedInsets: const EdgeInsets.fromLTRB(5, 0, 0, 0),
-                    controller: _yearEditingController,
-                    trailingIcon: const Icon(Icons.arrow_drop_down_rounded,
-                        color: Colors.black, size: 30),
-                    selectedTrailingIcon: const Icon(
-                        Icons.arrow_drop_up_rounded,
-                        color: Colors.black,
-                        size: 30),
-                    label: const Text(
-                      'Year',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                  child: DropdownButtonFormField2<String>(
+                    value: _yearEditingController.text,
+                    style: TextStyle(
+                      fontSize: 17,
+                      color: _isYearValid ? Colors.black : Colors.red,
                     ),
-                    inputDecorationTheme: const InputDecorationTheme(
+                    isExpanded: true,
+                    menuItemStyleData: const MenuItemStyleData(
+                      padding: EdgeInsets.only(left: 10),
+                    ),
+                    iconStyleData: const IconStyleData(
+                        openMenuIcon: Icon(Icons.arrow_drop_up_rounded,
+                            color: Colors.black),
+                        icon: Icon(Icons.arrow_drop_down_rounded,
+                            color: Colors.black),
+                        iconSize: 30),
+                    dropdownStyleData: DropdownStyleData(
+                      maxHeight: 200,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    decoration: InputDecoration(
+                      label: const Text(
+                        'Year',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      errorStyle: const TextStyle(
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                          fontStyle: FontStyle.italic,
+                          fontSize: 16),
                       border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10))),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
-                    dropdownMenuEntries: yearList.map((String items) {
-                      return DropdownMenuEntry<String>(
+                    items: yearList.map((String items) {
+                      return DropdownMenuItem<String>(
                         value: items,
-                        label: items,
+                        child: Text(items),
                       );
                     }).toList(),
-                    onSelected: (String? newValue) {
+                    validator: (value) {
+                      if (value == null) {
+                        setState(() {
+                          _isYearValid = false;
+                        });
+                        return 'Select year';
+                      } else {
+                        setState(() {
+                          _isYearValid = true;
+                        });
+                        return null;
+                      }
+                    },
+                    onChanged: (newValue) {
                       _yearEditingController.text = newValue!;
                       loadYearListAndPaymentsAndImageList(newValue);
                       setState(() {});
@@ -245,10 +285,12 @@ class _RentalMonthlyPageState extends State<RentalMonthlyPage> {
                           scale: 18,
                         ),
                         const SizedBox(width: 5),
-                        const Text(
-                          "Month",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w900, fontSize: 25),
+                        const Flexible(
+                          child: Text(
+                            "Month",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w900, fontSize: 25),
+                          ),
                         ),
                       ],
                     )),
@@ -261,10 +303,12 @@ class _RentalMonthlyPageState extends State<RentalMonthlyPage> {
                           scale: 18,
                         ),
                         const SizedBox(width: 5),
-                        const Text(
-                          "Tenant",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w900, fontSize: 25),
+                        const Flexible(
+                          child: Text(
+                            "Tenant",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w900, fontSize: 25),
+                          ),
                         ),
                       ],
                     )),
@@ -277,10 +321,12 @@ class _RentalMonthlyPageState extends State<RentalMonthlyPage> {
                           scale: 18,
                         ),
                         const SizedBox(width: 5),
-                        const Text(
-                          "Status",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w900, fontSize: 25),
+                        const Flexible(
+                          child: Text(
+                            "Status",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w900, fontSize: 25),
+                          ),
                         ),
                       ],
                     )),
@@ -292,6 +338,7 @@ class _RentalMonthlyPageState extends State<RentalMonthlyPage> {
             itemCount: monthList.length,
             itemBuilder: (context, index) {
               return Container(
+                  height: screenHeight * 0.08,
                   decoration: BoxDecoration(
                       color: Colors.blue.shade100,
                       border: const Border(
@@ -303,6 +350,7 @@ class _RentalMonthlyPageState extends State<RentalMonthlyPage> {
                           flex: 3,
                           child: Text(
                             monthList[index],
+                            overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 22),
                           )),
@@ -310,28 +358,32 @@ class _RentalMonthlyPageState extends State<RentalMonthlyPage> {
                           flex: 3,
                           child: Text(
                             tenantList[index],
+                            overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 22),
                           )),
-                      Flexible(
-                          fit: FlexFit.loose,
+                      Expanded(
                           flex: 3,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              (isLoading)
-                                  ? const CircularProgressIndicator(
-                                      color: Colors.blue,
-                                    )
-                                  : (tenantList[index] != "")
-                                      ? Image.asset(
-                                          'assets/icons/tick_icon.png',
-                                          scale: 18,
-                                        )
-                                      : Image.asset(
-                                          'assets/icons/cross_icon.png',
-                                          scale: 18,
-                                        ),
+                              SizedBox(
+                                height: 24,
+                                width: 24,
+                                child: (isLoading)
+                                    ? CircularProgressIndicator(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                      )
+                                    : (tenantList[index] != "")
+                                        ? Image.asset(
+                                            'assets/icons/tick_icon.png',
+                                          )
+                                        : Image.asset(
+                                            'assets/icons/cross_icon.png',
+                                          ),
+                              ),
                               GestureDetector(
                                   onTap: () async {
                                     String year = _yearEditingController.text;
@@ -381,6 +433,7 @@ class _RentalMonthlyPageState extends State<RentalMonthlyPage> {
                                                     fontWeight:
                                                         FontWeight.bold)),
                                             backgroundColor: Colors.red,
+                                            duration: Duration(seconds: 2),
                                           ));
                                   },
                                   child: Image.asset(
@@ -425,6 +478,7 @@ class _RentalMonthlyPageState extends State<RentalMonthlyPage> {
                                                     fontWeight:
                                                         FontWeight.bold)),
                                             backgroundColor: Colors.red,
+                                            duration: Duration(seconds: 2),
                                           ));
                                   },
                                   child: Image.asset(
@@ -562,7 +616,7 @@ class _RentalMonthlyPageState extends State<RentalMonthlyPage> {
           "userid": widget.userdata.userid,
           "propertyid": widget.propertydetail.propertyId,
         });
-    log(responsePayments.body);
+    // log(responsePayments.body);
     if (responsePayments.statusCode == 200) {
       var jsondatapayment = jsonDecode(responsePayments.body);
       if (jsondatapayment['status'] == "success") {

@@ -1,4 +1,5 @@
 import 'dart:convert';
+// ignore: unused_import
 import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
@@ -7,6 +8,7 @@ import 'package:landlordy/insert_data/addpropertypage.dart';
 import 'package:landlordy/models/property.dart';
 import 'package:landlordy/models/tenant.dart';
 import 'package:landlordy/models/user.dart';
+import 'package:landlordy/shared/loadingindicatorwidget.dart';
 import 'package:landlordy/shared/myserverconfig.dart';
 import 'package:landlordy/shared/navbar.dart';
 import 'package:landlordy/views/rentalmonthlypage.dart';
@@ -25,12 +27,27 @@ class _RentalPaymentPageState extends State<RentalPaymentPage> {
   final int _selectedIndex = 2;
   List<Property> propertyList = <Property>[];
   List<Tenant> tenantList = <Tenant>[];
+  String search = "";
   bool isLoading = true;
+  bool isLoadingMore = false;
+  bool hasMore = true;
+  bool isFabVisible = false;
+  final scrollController = ScrollController();
+  double previousScrollOffset = 0;
+  int numberofresult = 0, resultperpage = 0, curpage = 1;
 
   @override
   void initState() {
     super.initState();
+    propertyList.clear();
+    scrollController.addListener(_scrollListener);
     loadPropertiesAndTenants();
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -38,6 +55,21 @@ class _RentalPaymentPageState extends State<RentalPaymentPage> {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
+      floatingActionButton: isFabVisible
+          ? FloatingActionButton(
+              onPressed: () {
+                scrollController.animateTo(
+                  scrollController.position.minScrollExtent,
+                  duration: const Duration(seconds: 2),
+                  curve: Curves.fastLinearToSlowEaseIn,
+                );
+              },
+              shape: const CircleBorder(),
+              child: Image.asset(
+                'assets/icons/back_to_top_icon.png',
+              ),
+            )
+          : null,
       key: scaffoldKey,
       drawer: NavBar(
         userdata: widget.userdata,
@@ -89,9 +121,7 @@ class _RentalPaymentPageState extends State<RentalPaymentPage> {
                       ],
                     ),
                     const SizedBox(height: 100),
-                    const CircularProgressIndicator(
-                      color: Colors.blue,
-                    ),
+                    const LoadingIndicatorWidget(type: 1),
                   ],
                 ),
               )
@@ -110,7 +140,7 @@ class _RentalPaymentPageState extends State<RentalPaymentPage> {
                             child: Padding(
                               padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
                               child: Text(
-                                "${propertyList.length} Records",
+                                "$numberofresult Records",
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 20,
@@ -174,7 +204,7 @@ class _RentalPaymentPageState extends State<RentalPaymentPage> {
                                                 AddPropertyPage(
                                                     userdata: widget.userdata),
                                           ));
-                                      loadPropertiesAndTenants();
+                                      _refresh();
                                     },
                                     icon: Image.asset(
                                       'assets/icons/add_icon.png',
@@ -221,7 +251,7 @@ class _RentalPaymentPageState extends State<RentalPaymentPage> {
                             child: Padding(
                               padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
                               child: Text(
-                                "${propertyList.length} Records",
+                                "$numberofresult Records",
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 20,
@@ -253,169 +283,217 @@ class _RentalPaymentPageState extends State<RentalPaymentPage> {
                       ),
                       Expanded(
                         child: ListView.separated(
-                          itemCount: propertyList.length,
+                          controller: scrollController,
+                          itemCount: propertyList.length + 1,
                           separatorBuilder: (context, index) =>
                               const SizedBox(height: 10),
                           itemBuilder: (context, index) {
-                            return GestureDetector(
-                              onTap: () async {
-                                Property singleProperty = propertyList[index];
-                                Tenant singleTenant = tenantList.firstWhere(
-                                    (tenant) =>
-                                        tenant.tenantId ==
-                                        propertyList[index].tenantId,
-                                    orElse: () => Tenant(
-                                        tenantId: null,
-                                        tenantName: "Not Available"));
-                                await Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => RentalMonthlyPage(
-                                            userdata: widget.userdata,
-                                            propertydetail: singleProperty,
-                                            tenantdetail: singleTenant)));
-                                loadPropertiesAndTenants();
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.blue.shade100,
-                                  border: const Border.symmetric(
-                                      horizontal: BorderSide(
-                                          color: Colors.black, width: 2)),
-                                ),
-                                padding: const EdgeInsets.all(4),
-                                height: screenHeight * 0.16,
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      clipBehavior: Clip.antiAlias,
-                                      margin:
-                                          const EdgeInsets.fromLTRB(0, 0, 4, 0),
-                                      width: screenWidth * 0.4,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(5),
-                                        border: Border.all(
-                                            color: Colors.black, width: 2),
+                            if (index < propertyList.length) {
+                              return GestureDetector(
+                                onTap: () async {
+                                  Property singleProperty = propertyList[index];
+                                  Tenant singleTenant = tenantList.firstWhere(
+                                      (tenant) =>
+                                          tenant.tenantId ==
+                                          propertyList[index].tenantId,
+                                      orElse: () => Tenant(
+                                          tenantId: null,
+                                          tenantName: "Not Available"));
+                                  await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              RentalMonthlyPage(
+                                                  userdata: widget.userdata,
+                                                  propertydetail:
+                                                      singleProperty,
+                                                  tenantdetail: singleTenant)));
+                                  _refresh();
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.blue.shade100,
+                                    border: const Border.symmetric(
+                                        horizontal: BorderSide(
+                                            color: Colors.black, width: 2)),
+                                  ),
+                                  padding: const EdgeInsets.all(4),
+                                  height: screenHeight * 0.16,
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        clipBehavior: Clip.antiAlias,
+                                        margin: const EdgeInsets.fromLTRB(
+                                            0, 0, 4, 0),
+                                        width: screenWidth * 0.4,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                          border: Border.all(
+                                              color: Colors.black, width: 2),
+                                        ),
+                                        child: Image.network(
+                                          "${MyServerConfig.server}/landlordy/assets/properties/${propertyList[index].propertyId}_1.png",
+                                          fit: BoxFit.cover,
+                                          loadingBuilder: (context, child,
+                                              loadingProgress) {
+                                            if (loadingProgress == null) {
+                                              return child;
+                                            } else {
+                                              return const Center(
+                                                child: LoadingIndicatorWidget(
+                                                    type: 2),
+                                              );
+                                            }
+                                          },
+                                        ),
                                       ),
-                                      child: Image.network(
-                                        "${MyServerConfig.server}/landlordy/assets/properties/${propertyList[index].propertyId}_1.png",
-                                        fit: BoxFit.cover,
-                                        loadingBuilder:
-                                            (context, child, loadingProgress) {
-                                          if (loadingProgress == null) {
-                                            return child;
-                                          } else {
-                                            double progress = loadingProgress
-                                                    .cumulativeBytesLoaded /
-                                                (loadingProgress
-                                                        .expectedTotalBytes ??
-                                                    1);
-                                            return Center(
-                                                child:
-                                                    CircularProgressIndicator(
-                                              value: progress,
-                                              color: Colors.blue,
-                                            ));
-                                          }
-                                        },
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
+                                      Expanded(
+                                        child: SingleChildScrollView(
+                                          scrollDirection: Axis.vertical,
+                                          child: Column(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.center,
+                                                MainAxisAlignment.spaceBetween,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
-                                              Text(
-                                                propertyList[index]
-                                                    .propertyName
-                                                    .toString(),
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.w900,
-                                                  fontSize: 25,
-                                                ),
+                                              Row(
+                                                children: [
+                                                  const SizedBox(width: 10),
+                                                  Flexible(
+                                                    child: Text(
+                                                      propertyList[index]
+                                                          .propertyName
+                                                          .toString(),
+                                                      style: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 22,
+                                                      ),
+                                                      softWrap: false,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Image.asset(
+                                                    'assets/icons/state_icon.png',
+                                                    scale: 20,
+                                                  ),
+                                                  const SizedBox(width: 5),
+                                                  Flexible(
+                                                    child: Text(
+                                                      "${propertyList[index].propertyState}",
+                                                      style: const TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.normal,
+                                                          fontSize: 20),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      softWrap: false,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Image.asset(
+                                                    'assets/icons/property_type_icon.png',
+                                                    scale: 20,
+                                                  ),
+                                                  const SizedBox(width: 5),
+                                                  Flexible(
+                                                    child: Text(
+                                                      "${propertyList[index].propertyType}",
+                                                      style: const TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.normal,
+                                                          fontSize: 20),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      softWrap: false,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Image.asset(
+                                                    'assets/icons/tenant_name_icon.png',
+                                                    scale: 20,
+                                                  ),
+                                                  const SizedBox(width: 5),
+                                                  Flexible(
+                                                    child: Text(
+                                                      "${tenantList.firstWhere(
+                                                            (tenants) =>
+                                                                tenants
+                                                                    .tenantId ==
+                                                                propertyList[
+                                                                        index]
+                                                                    .tenantId,
+                                                            orElse: () => Tenant(
+                                                                tenantName:
+                                                                    'Not Available'),
+                                                          ).tenantName}",
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      softWrap: false,
+                                                      style: const TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.normal,
+                                                          fontSize: 20),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.end,
+                                                children: [
+                                                  Flexible(
+                                                    child: Text(
+                                                      "RM${propertyList[index].rentalPrice}",
+                                                      style: const TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 22,
+                                                          fontStyle:
+                                                              FontStyle.italic),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      softWrap: false,
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                             ],
                                           ),
-                                          Row(
-                                            children: [
-                                              Image.asset(
-                                                'assets/icons/state_icon.png',
-                                                scale: 20,
-                                              ),
-                                              const SizedBox(width: 5),
-                                              Text(
-                                                "${propertyList[index].propertyState}",
-                                                style: const TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 20),
-                                              ),
-                                            ],
-                                          ),
-                                          Row(
-                                            children: [
-                                              Image.asset(
-                                                'assets/icons/property_type_icon.png',
-                                                scale: 20,
-                                              ),
-                                              const SizedBox(width: 5),
-                                              Text(
-                                                "${propertyList[index].propertyType}",
-                                                style: const TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 20),
-                                              ),
-                                            ],
-                                          ),
-                                          Row(
-                                            children: [
-                                              Image.asset(
-                                                'assets/icons/tenant_name_icon.png',
-                                                scale: 20,
-                                              ),
-                                              const SizedBox(width: 5),
-                                              Text(
-                                                "${tenantList.firstWhere(
-                                                      (tenants) =>
-                                                          tenants.tenantId ==
-                                                          propertyList[index]
-                                                              .tenantId,
-                                                      orElse: () => Tenant(
-                                                          tenantName:
-                                                              'Not Available'),
-                                                    ).tenantName}",
-                                                style: const TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 20),
-                                              ),
-                                            ],
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                            children: [
-                                              Text(
-                                                "RM${propertyList[index].rentalPrice}",
-                                                style: const TextStyle(
-                                                    fontWeight: FontWeight.w900,
-                                                    fontSize: 25,
-                                                    fontStyle:
-                                                        FontStyle.italic),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            );
+                              );
+                            } else {
+                              if ((hasMore)) {
+                                return const LoadingIndicatorWidget(type: 2);
+                              } else {
+                                return Container(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  child: const Center(
+                                    child: Text("You've Reached the End",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.normal,
+                                            fontSize: 18,
+                                            color: Colors.white)),
+                                  ),
+                                );
+                              }
+                            }
                           },
                         ),
                       ),
@@ -452,7 +530,7 @@ class _RentalPaymentPageState extends State<RentalPaymentPage> {
                   const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () {
-                      String search = searchController.text;
+                      search = searchController.text;
                       searchProperty(search);
                       Navigator.of(context).pop();
                     },
@@ -488,17 +566,24 @@ class _RentalPaymentPageState extends State<RentalPaymentPage> {
         Uri.parse(
             "${MyServerConfig.server}/landlordy/php/property/load_property.php"),
         body: {
+          "userid": widget.userdata.userid,
           "search": search,
-          "userId": widget.userdata.userid
         }).then((response) {
-      log(response.body);
+      // log(response.body);
       propertyList.clear();
       if (response.statusCode == 200) {
         var jsondata = jsonDecode(response.body);
         if (jsondata['status'] == "success") {
+          numberofresult = jsondata['numberofresult'];
+          resultperpage = jsondata['resultperpage'];
+          final List<Property> newPropertyList = <Property>[];
           jsondata['data']['properties'].forEach((v) {
-            propertyList.add(Property.fromJson(v));
+            newPropertyList.add(Property.fromJson(v));
           });
+          if (newPropertyList.length < resultperpage) {
+            hasMore = false;
+          }
+          propertyList.addAll(newPropertyList);
         }
         setState(() {
           isLoading = false;
@@ -511,27 +596,41 @@ class _RentalPaymentPageState extends State<RentalPaymentPage> {
     final responseProperties = await http.post(
         Uri.parse(
             "${MyServerConfig.server}/landlordy/php/property/load_property.php"),
-        body: {"userid": widget.userdata.userid});
+        body: {
+          "userid": widget.userdata.userid,
+          "pageno": curpage.toString(),
+        });
     final responseTenants = await http.post(
         Uri.parse(
             "${MyServerConfig.server}/landlordy/php/tenant/load_tenant.php"),
-        body: {"userid": widget.userdata.userid});
+        body: {
+          "userid": widget.userdata.userid,
+        });
     // log(responseProperties.body);
     // log(responseTenants.body);
-    if (responseProperties.statusCode == 200 &&
-        responseTenants.statusCode == 200) {
-      var jsondataproperty = jsonDecode(responseProperties.body);
+    if (responseTenants.statusCode == 200) {
       var jsondatatenant = jsonDecode(responseTenants.body);
-      if (jsondataproperty['status'] == "success" &&
-          jsondatatenant['status'] == "success") {
-        propertyList.clear();
+      if (jsondatatenant['status'] == "success") {
         tenantList.clear();
         jsondatatenant['data']['tenants'].forEach((v) {
           tenantList.add(Tenant.fromJson(v));
         });
+      }
+    }
+    if (responseProperties.statusCode == 200) {
+      var jsondataproperty = jsonDecode(responseProperties.body);
+      if (jsondataproperty['status'] == "success") {
+        numberofresult = jsondataproperty['numberofresult'];
+        resultperpage = jsondataproperty['resultperpage'];
+        final List<Property> newPropertyList = <Property>[];
         jsondataproperty['data']['properties'].forEach((v) {
-          propertyList.add(Property.fromJson(v));
+          newPropertyList.add(Property.fromJson(v));
         });
+        curpage++;
+        if (newPropertyList.length < resultperpage) {
+          hasMore = false;
+        }
+        propertyList.addAll(newPropertyList);
       }
       isLoading = false;
       setState(() {});
@@ -540,11 +639,48 @@ class _RentalPaymentPageState extends State<RentalPaymentPage> {
 
   Future<void> _refresh() async {
     return Future.delayed(
-      const Duration(seconds: 3),
-      () {
-        loadPropertiesAndTenants();
-        setState(() {});
+      const Duration(seconds: 1),
+      () async {
+        setState(() {
+          isLoading = true;
+        });
+        propertyList.clear();
+        isLoadingMore = false;
+        hasMore = true;
+        curpage = 1;
+        await loadPropertiesAndTenants();
       },
     );
+  }
+
+  Future<void> _scrollListener() async {
+    if (isLoadingMore) {
+      return;
+    }
+    if (scrollController.offset > previousScrollOffset) {
+      setState(() {
+        isFabVisible = false;
+      });
+    } else {
+      setState(() {
+        isFabVisible = true;
+      });
+    }
+    previousScrollOffset = scrollController.offset;
+    if (scrollController.offset < 50) {
+      setState(() {
+        isFabVisible = false;
+      });
+    }
+    if (scrollController.position.maxScrollExtent ==
+        scrollController.position.pixels) {
+      setState(() {
+        isLoadingMore = true;
+      });
+      await loadPropertiesAndTenants();
+      setState(() {
+        isLoadingMore = false;
+      });
+    }
   }
 }

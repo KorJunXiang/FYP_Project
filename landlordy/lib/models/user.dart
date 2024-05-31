@@ -1,8 +1,9 @@
-class  User {
+class User {
   String? userid;
   String? useremail;
   String? username;
   String? userpassword;
+  String? status;
   String? userdatereg;
 
   User(
@@ -10,6 +11,7 @@ class  User {
       this.useremail,
       this.username,
       this.userpassword,
+      this.status,
       this.userdatereg});
 
   User.fromJson(Map<String, dynamic> json) {
@@ -17,6 +19,7 @@ class  User {
     useremail = json['useremail'];
     username = json['username'];
     userpassword = json['userpassword'];
+    status = json['status'];
     userdatereg = json['userdatereg'];
   }
 
@@ -26,6 +29,7 @@ class  User {
     data['useremail'] = useremail;
     data['username'] = username;
     data['userpassword'] = userpassword;
+    data['status'] = status;
     data['userdatereg'] = userdatereg;
     return data;
   }

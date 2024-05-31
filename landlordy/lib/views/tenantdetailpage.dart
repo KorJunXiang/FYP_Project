@@ -59,375 +59,396 @@ class _TenantDetailPageState extends State<TenantDetailPage> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Card(
-            margin: const EdgeInsets.all(10),
-            color: Colors.lightBlue.shade100,
-            elevation: 5,
-            child: Container(
-              padding: const EdgeInsets.fromLTRB(5, 10, 5, 10),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: Column(
-                  children: [
-                    Table(
-                      columnWidths: const {
-                        0: FlexColumnWidth(2),
-                        1: FlexColumnWidth(3),
-                        2: FlexColumnWidth(7),
-                      },
-                      children: [
-                        TableRow(children: [
-                          TableCell(
-                              verticalAlignment:
-                                  TableCellVerticalAlignment.middle,
-                              child: Container(
-                                margin: const EdgeInsets.fromLTRB(5, 0, 15, 0),
-                                child: const Image(
-                                  image: AssetImage(
-                                    'assets/icons/tenant_name_icon.png',
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Column(
+          children: [
+            Card(
+              margin: const EdgeInsets.all(10),
+              color: Colors.blue.shade100,
+              elevation: 5,
+              child: Container(
+                padding: const EdgeInsets.fromLTRB(5, 10, 5, 10),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: Column(
+                    children: [
+                      Table(
+                        columnWidths: const {
+                          0: FlexColumnWidth(2),
+                          1: FlexColumnWidth(3),
+                          2: FlexColumnWidth(7),
+                        },
+                        children: [
+                          TableRow(children: [
+                            TableCell(
+                                verticalAlignment:
+                                    TableCellVerticalAlignment.middle,
+                                child: Container(
+                                  margin:
+                                      const EdgeInsets.fromLTRB(5, 0, 15, 0),
+                                  child: const Image(
+                                    image: AssetImage(
+                                      'assets/icons/tenant_name_icon.png',
+                                    ),
+                                    fit: BoxFit.scaleDown,
                                   ),
-                                  fit: BoxFit.scaleDown,
-                                ),
-                              )),
-                          const TableCell(
+                                )),
+                            const TableCell(
+                                verticalAlignment:
+                                    TableCellVerticalAlignment.middle,
+                                child: Text(
+                                  "Tenant Name",
+                                  style: TextStyle(
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.w900),
+                                )),
+                            TableCell(
                               verticalAlignment:
                                   TableCellVerticalAlignment.middle,
                               child: Text(
-                                "Tenant Name",
-                                style: TextStyle(
-                                    fontSize: 25, fontWeight: FontWeight.w900),
-                              )),
-                          TableCell(
-                            verticalAlignment:
-                                TableCellVerticalAlignment.middle,
-                            child: Text(
-                              widget.tenantdetail.tenantName.toString(),
-                              style: const TextStyle(
-                                  fontSize: 22, fontWeight: FontWeight.w500),
-                            ),
-                          )
-                        ]),
-                        const TableRow(children: [
-                          TableCell(child: SizedBox(height: 20)),
-                          TableCell(child: SizedBox(height: 20)),
-                          TableCell(child: SizedBox(height: 20))
-                        ]),
-                        TableRow(children: [
-                          TableCell(
-                              verticalAlignment:
-                                  TableCellVerticalAlignment.middle,
-                              child: Container(
-                                margin: const EdgeInsets.fromLTRB(5, 0, 15, 0),
-                                child: const Image(
-                                  image: AssetImage(
-                                    'assets/icons/email_icon.png',
+                                widget.tenantdetail.tenantName.toString(),
+                                style: const TextStyle(
+                                    fontSize: 22, fontWeight: FontWeight.w500),
+                              ),
+                            )
+                          ]),
+                          const TableRow(children: [
+                            TableCell(child: SizedBox(height: 20)),
+                            TableCell(child: SizedBox(height: 20)),
+                            TableCell(child: SizedBox(height: 20))
+                          ]),
+                          TableRow(children: [
+                            TableCell(
+                                verticalAlignment:
+                                    TableCellVerticalAlignment.middle,
+                                child: Container(
+                                  margin:
+                                      const EdgeInsets.fromLTRB(5, 0, 15, 0),
+                                  child: const Image(
+                                    image: AssetImage(
+                                      'assets/icons/email_icon.png',
+                                    ),
+                                    fit: BoxFit.scaleDown,
                                   ),
-                                  fit: BoxFit.scaleDown,
-                                ),
-                              )),
-                          const TableCell(
+                                )),
+                            const TableCell(
+                                verticalAlignment:
+                                    TableCellVerticalAlignment.middle,
+                                child: Text(
+                                  "Email",
+                                  style: TextStyle(
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.w900),
+                                )),
+                            TableCell(
                               verticalAlignment:
                                   TableCellVerticalAlignment.middle,
                               child: Text(
-                                "Email",
-                                style: TextStyle(
-                                    fontSize: 25, fontWeight: FontWeight.w900),
-                              )),
-                          TableCell(
-                            verticalAlignment:
-                                TableCellVerticalAlignment.middle,
-                            child: Text(
-                              widget.tenantdetail.tenantEmail.toString(),
-                              style: const TextStyle(
-                                  fontSize: 22, fontWeight: FontWeight.w500),
-                            ),
-                          )
-                        ]),
-                        const TableRow(children: [
-                          TableCell(child: SizedBox(height: 20)),
-                          TableCell(child: SizedBox(height: 20)),
-                          TableCell(child: SizedBox(height: 20))
-                        ]),
-                        TableRow(children: [
-                          TableCell(
-                              verticalAlignment:
-                                  TableCellVerticalAlignment.middle,
-                              child: Container(
-                                margin: const EdgeInsets.fromLTRB(5, 0, 15, 0),
-                                child: const Image(
-                                  image: AssetImage(
-                                    'assets/icons/gender_icon.png',
+                                widget.tenantdetail.tenantEmail.toString(),
+                                style: const TextStyle(
+                                    fontSize: 22, fontWeight: FontWeight.w500),
+                              ),
+                            )
+                          ]),
+                          const TableRow(children: [
+                            TableCell(child: SizedBox(height: 20)),
+                            TableCell(child: SizedBox(height: 20)),
+                            TableCell(child: SizedBox(height: 20))
+                          ]),
+                          TableRow(children: [
+                            TableCell(
+                                verticalAlignment:
+                                    TableCellVerticalAlignment.middle,
+                                child: Container(
+                                  margin:
+                                      const EdgeInsets.fromLTRB(5, 0, 15, 0),
+                                  child: const Image(
+                                    image: AssetImage(
+                                      'assets/icons/gender_icon.png',
+                                    ),
+                                    fit: BoxFit.scaleDown,
                                   ),
-                                  fit: BoxFit.scaleDown,
-                                ),
-                              )),
-                          const TableCell(
+                                )),
+                            const TableCell(
+                                verticalAlignment:
+                                    TableCellVerticalAlignment.middle,
+                                child: Text(
+                                  "Gender",
+                                  style: TextStyle(
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.w900),
+                                )),
+                            TableCell(
                               verticalAlignment:
                                   TableCellVerticalAlignment.middle,
                               child: Text(
-                                "Gender",
-                                style: TextStyle(
-                                    fontSize: 25, fontWeight: FontWeight.w900),
-                              )),
-                          TableCell(
-                            verticalAlignment:
-                                TableCellVerticalAlignment.middle,
-                            child: Text(
-                              widget.tenantdetail.tenantGender.toString(),
-                              style: const TextStyle(
-                                  fontSize: 22, fontWeight: FontWeight.w500),
-                            ),
-                          )
-                        ]),
-                        const TableRow(children: [
-                          TableCell(child: SizedBox(height: 20)),
-                          TableCell(child: SizedBox(height: 20)),
-                          TableCell(child: SizedBox(height: 20))
-                        ]),
-                        TableRow(children: [
-                          TableCell(
-                              verticalAlignment:
-                                  TableCellVerticalAlignment.middle,
-                              child: Container(
-                                margin: const EdgeInsets.fromLTRB(5, 0, 15, 0),
-                                child: const Image(
-                                  image: AssetImage(
-                                    'assets/icons/age_icon.png',
+                                widget.tenantdetail.tenantGender.toString(),
+                                style: const TextStyle(
+                                    fontSize: 22, fontWeight: FontWeight.w500),
+                              ),
+                            )
+                          ]),
+                          const TableRow(children: [
+                            TableCell(child: SizedBox(height: 20)),
+                            TableCell(child: SizedBox(height: 20)),
+                            TableCell(child: SizedBox(height: 20))
+                          ]),
+                          TableRow(children: [
+                            TableCell(
+                                verticalAlignment:
+                                    TableCellVerticalAlignment.middle,
+                                child: Container(
+                                  margin:
+                                      const EdgeInsets.fromLTRB(5, 0, 15, 0),
+                                  child: const Image(
+                                    image: AssetImage(
+                                      'assets/icons/age_icon.png',
+                                    ),
+                                    fit: BoxFit.scaleDown,
                                   ),
-                                  fit: BoxFit.scaleDown,
-                                ),
-                              )),
-                          const TableCell(
+                                )),
+                            const TableCell(
+                                verticalAlignment:
+                                    TableCellVerticalAlignment.middle,
+                                child: Text(
+                                  "Age",
+                                  style: TextStyle(
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.w900),
+                                )),
+                            TableCell(
                               verticalAlignment:
                                   TableCellVerticalAlignment.middle,
                               child: Text(
-                                "Age",
-                                style: TextStyle(
-                                    fontSize: 25, fontWeight: FontWeight.w900),
-                              )),
-                          TableCell(
-                            verticalAlignment:
-                                TableCellVerticalAlignment.middle,
-                            child: Text(
-                              widget.tenantdetail.tenantAge.toString(),
-                              style: const TextStyle(
-                                  fontSize: 22, fontWeight: FontWeight.w500),
-                            ),
-                          )
-                        ]),
-                        const TableRow(children: [
-                          TableCell(child: SizedBox(height: 20)),
-                          TableCell(child: SizedBox(height: 20)),
-                          TableCell(child: SizedBox(height: 20))
-                        ]),
-                        TableRow(children: [
-                          TableCell(
-                              verticalAlignment:
-                                  TableCellVerticalAlignment.middle,
-                              child: Container(
-                                margin: const EdgeInsets.fromLTRB(5, 0, 15, 0),
-                                child: const Image(
-                                  image: AssetImage(
-                                    'assets/icons/category_icon.png',
+                                widget.tenantdetail.tenantAge.toString(),
+                                style: const TextStyle(
+                                    fontSize: 22, fontWeight: FontWeight.w500),
+                              ),
+                            )
+                          ]),
+                          const TableRow(children: [
+                            TableCell(child: SizedBox(height: 20)),
+                            TableCell(child: SizedBox(height: 20)),
+                            TableCell(child: SizedBox(height: 20))
+                          ]),
+                          TableRow(children: [
+                            TableCell(
+                                verticalAlignment:
+                                    TableCellVerticalAlignment.middle,
+                                child: Container(
+                                  margin:
+                                      const EdgeInsets.fromLTRB(5, 0, 15, 0),
+                                  child: const Image(
+                                    image: AssetImage(
+                                      'assets/icons/category_icon.png',
+                                    ),
+                                    fit: BoxFit.scaleDown,
                                   ),
-                                  fit: BoxFit.scaleDown,
-                                ),
-                              )),
-                          const TableCell(
+                                )),
+                            const TableCell(
+                                verticalAlignment:
+                                    TableCellVerticalAlignment.middle,
+                                child: Text(
+                                  "Category",
+                                  style: TextStyle(
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.w900),
+                                )),
+                            TableCell(
                               verticalAlignment:
                                   TableCellVerticalAlignment.middle,
                               child: Text(
-                                "Category",
-                                style: TextStyle(
-                                    fontSize: 25, fontWeight: FontWeight.w900),
-                              )),
-                          TableCell(
-                            verticalAlignment:
-                                TableCellVerticalAlignment.middle,
-                            child: Text(
-                              widget.tenantdetail.tenantCategory.toString(),
-                              style: const TextStyle(
-                                  fontSize: 22, fontWeight: FontWeight.w500),
-                            ),
-                          )
-                        ]),
-                        const TableRow(children: [
-                          TableCell(child: SizedBox(height: 20)),
-                          TableCell(child: SizedBox(height: 20)),
-                          TableCell(child: SizedBox(height: 20))
-                        ]),
-                        TableRow(children: [
-                          TableCell(
-                              verticalAlignment:
-                                  TableCellVerticalAlignment.middle,
-                              child: Container(
-                                margin: const EdgeInsets.fromLTRB(5, 0, 15, 0),
-                                child: const Image(
-                                  image: AssetImage(
-                                    'assets/icons/phone_icon.png',
+                                widget.tenantdetail.tenantCategory.toString(),
+                                style: const TextStyle(
+                                    fontSize: 22, fontWeight: FontWeight.w500),
+                              ),
+                            )
+                          ]),
+                          const TableRow(children: [
+                            TableCell(child: SizedBox(height: 20)),
+                            TableCell(child: SizedBox(height: 20)),
+                            TableCell(child: SizedBox(height: 20))
+                          ]),
+                          TableRow(children: [
+                            TableCell(
+                                verticalAlignment:
+                                    TableCellVerticalAlignment.middle,
+                                child: Container(
+                                  margin:
+                                      const EdgeInsets.fromLTRB(5, 0, 15, 0),
+                                  child: const Image(
+                                    image: AssetImage(
+                                      'assets/icons/phone_icon.png',
+                                    ),
+                                    fit: BoxFit.scaleDown,
                                   ),
-                                  fit: BoxFit.scaleDown,
-                                ),
-                              )),
-                          const TableCell(
+                                )),
+                            const TableCell(
+                                verticalAlignment:
+                                    TableCellVerticalAlignment.middle,
+                                child: Text(
+                                  "Phone Number",
+                                  style: TextStyle(
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.w900),
+                                )),
+                            TableCell(
                               verticalAlignment:
                                   TableCellVerticalAlignment.middle,
                               child: Text(
-                                "Phone Number",
-                                style: TextStyle(
-                                    fontSize: 25, fontWeight: FontWeight.w900),
-                              )),
-                          TableCell(
-                            verticalAlignment:
-                                TableCellVerticalAlignment.middle,
-                            child: Text(
-                              formatPhoneNumber(
-                                  widget.tenantdetail.tenantPhone.toString()),
-                              style: const TextStyle(
-                                  fontSize: 22, fontWeight: FontWeight.w500),
-                            ),
-                          )
-                        ]),
-                        const TableRow(children: [
-                          TableCell(child: SizedBox(height: 20)),
-                          TableCell(child: SizedBox(height: 20)),
-                          TableCell(child: SizedBox(height: 20))
-                        ]),
-                        TableRow(children: [
-                          TableCell(
-                              verticalAlignment:
-                                  TableCellVerticalAlignment.middle,
-                              child: Container(
-                                margin: const EdgeInsets.fromLTRB(5, 0, 15, 0),
-                                child: const Image(
-                                  image: AssetImage(
-                                    'assets/icons/price_icon.png',
+                                formatPhoneNumber(
+                                    widget.tenantdetail.tenantPhone.toString()),
+                                style: const TextStyle(
+                                    fontSize: 22, fontWeight: FontWeight.w500),
+                              ),
+                            )
+                          ]),
+                          const TableRow(children: [
+                            TableCell(child: SizedBox(height: 20)),
+                            TableCell(child: SizedBox(height: 20)),
+                            TableCell(child: SizedBox(height: 20))
+                          ]),
+                          TableRow(children: [
+                            TableCell(
+                                verticalAlignment:
+                                    TableCellVerticalAlignment.middle,
+                                child: Container(
+                                  margin:
+                                      const EdgeInsets.fromLTRB(5, 0, 15, 0),
+                                  child: const Image(
+                                    image: AssetImage(
+                                      'assets/icons/price_icon.png',
+                                    ),
+                                    fit: BoxFit.scaleDown,
                                   ),
-                                  fit: BoxFit.scaleDown,
-                                ),
-                              )),
-                          const TableCell(
+                                )),
+                            const TableCell(
+                                verticalAlignment:
+                                    TableCellVerticalAlignment.middle,
+                                child: Text(
+                                  "Rental Price",
+                                  style: TextStyle(
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.w900),
+                                )),
+                            TableCell(
                               verticalAlignment:
                                   TableCellVerticalAlignment.middle,
                               child: Text(
-                                "Rental Price",
-                                style: TextStyle(
-                                    fontSize: 25, fontWeight: FontWeight.w900),
-                              )),
-                          TableCell(
-                            verticalAlignment:
-                                TableCellVerticalAlignment.middle,
-                            child: Text(
-                              "RM ${widget.tenantdetail.rentalPrice}",
-                              style: const TextStyle(
-                                  fontSize: 22, fontWeight: FontWeight.w500),
-                            ),
-                          )
-                        ]),
-                        const TableRow(children: [
-                          TableCell(child: SizedBox(height: 20)),
-                          TableCell(child: SizedBox(height: 20)),
-                          TableCell(child: SizedBox(height: 20))
-                        ]),
-                        TableRow(children: [
-                          TableCell(
-                              verticalAlignment:
-                                  TableCellVerticalAlignment.middle,
-                              child: Container(
-                                margin: const EdgeInsets.fromLTRB(5, 0, 15, 0),
-                                child: const Image(
-                                  image: AssetImage(
-                                    'assets/icons/property_name_icon.png',
+                                "RM ${widget.tenantdetail.rentalPrice}",
+                                style: const TextStyle(
+                                    fontSize: 22, fontWeight: FontWeight.w500),
+                              ),
+                            )
+                          ]),
+                          const TableRow(children: [
+                            TableCell(child: SizedBox(height: 20)),
+                            TableCell(child: SizedBox(height: 20)),
+                            TableCell(child: SizedBox(height: 20))
+                          ]),
+                          TableRow(children: [
+                            TableCell(
+                                verticalAlignment:
+                                    TableCellVerticalAlignment.middle,
+                                child: Container(
+                                  margin:
+                                      const EdgeInsets.fromLTRB(5, 0, 15, 0),
+                                  child: const Image(
+                                    image: AssetImage(
+                                      'assets/icons/property_name_icon.png',
+                                    ),
+                                    fit: BoxFit.scaleDown,
                                   ),
-                                  fit: BoxFit.scaleDown,
-                                ),
-                              )),
-                          const TableCell(
+                                )),
+                            const TableCell(
+                                verticalAlignment:
+                                    TableCellVerticalAlignment.middle,
+                                child: Text(
+                                  "Latest Property",
+                                  style: TextStyle(
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.w900),
+                                )),
+                            TableCell(
                               verticalAlignment:
                                   TableCellVerticalAlignment.middle,
                               child: Text(
-                                "Latest Property",
-                                style: TextStyle(
-                                    fontSize: 25, fontWeight: FontWeight.w900),
-                              )),
-                          TableCell(
-                            verticalAlignment:
-                                TableCellVerticalAlignment.middle,
-                            child: Text(
-                              widget.tenantdetail.latestProperty.toString(),
-                              style: const TextStyle(
-                                  fontSize: 22, fontWeight: FontWeight.w500),
-                            ),
-                          )
-                        ]),
-                        const TableRow(children: [
-                          TableCell(child: SizedBox(height: 20)),
-                          TableCell(child: SizedBox(height: 20)),
-                          TableCell(child: SizedBox(height: 20))
-                        ]),
-                        TableRow(children: [
-                          TableCell(
-                              verticalAlignment:
-                                  TableCellVerticalAlignment.middle,
-                              child: Container(
-                                margin: const EdgeInsets.fromLTRB(5, 0, 15, 0),
-                                child: const Image(
-                                  image: AssetImage(
-                                    'assets/icons/rental_status_icon.png',
+                                widget.tenantdetail.latestProperty.toString(),
+                                style: const TextStyle(
+                                    fontSize: 22, fontWeight: FontWeight.w500),
+                              ),
+                            )
+                          ]),
+                          const TableRow(children: [
+                            TableCell(child: SizedBox(height: 20)),
+                            TableCell(child: SizedBox(height: 20)),
+                            TableCell(child: SizedBox(height: 20))
+                          ]),
+                          TableRow(children: [
+                            TableCell(
+                                verticalAlignment:
+                                    TableCellVerticalAlignment.middle,
+                                child: Container(
+                                  margin:
+                                      const EdgeInsets.fromLTRB(5, 0, 15, 0),
+                                  child: const Image(
+                                    image: AssetImage(
+                                      'assets/icons/rental_status_icon.png',
+                                    ),
+                                    fit: BoxFit.scaleDown,
                                   ),
-                                  fit: BoxFit.scaleDown,
-                                ),
-                              )),
-                          const TableCell(
+                                )),
+                            const TableCell(
+                                verticalAlignment:
+                                    TableCellVerticalAlignment.middle,
+                                child: Text(
+                                  "Rental Status",
+                                  style: TextStyle(
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.w900),
+                                )),
+                            TableCell(
                               verticalAlignment:
                                   TableCellVerticalAlignment.middle,
                               child: Text(
-                                "Rental Status",
-                                style: TextStyle(
-                                    fontSize: 25, fontWeight: FontWeight.w900),
-                              )),
-                          TableCell(
-                            verticalAlignment:
-                                TableCellVerticalAlignment.middle,
-                            child: Text(
-                              widget.tenantdetail.rentalStatus.toString(),
-                              style: const TextStyle(
-                                  fontSize: 22, fontWeight: FontWeight.w500),
-                            ),
-                          )
-                        ]),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    ElevatedButton(
-                      clipBehavior: Clip.antiAlias,
-                      onPressed: () {
-                        launchWhatsApp(
-                            widget.tenantdetail.tenantPhone.toString(),
-                            widget.tenantdetail.tenantName.toString());
-                      },
-                      style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.zero,
-                        fixedSize: Size(screenWidth * 0.5, 50),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        // elevation: 100,
+                                widget.tenantdetail.rentalStatus.toString(),
+                                style: const TextStyle(
+                                    fontSize: 22, fontWeight: FontWeight.w500),
+                              ),
+                            )
+                          ]),
+                        ],
                       ),
-                      child: Ink.image(
+                      const SizedBox(height: 20),
+                      ElevatedButton(
+                        clipBehavior: Clip.antiAlias,
+                        onPressed: () {
+                          launchWhatsApp(
+                              widget.tenantdetail.tenantPhone.toString(),
+                              widget.tenantdetail.tenantName.toString());
+                        },
+                        style: ElevatedButton.styleFrom(
                           padding: EdgeInsets.zero,
-                          image: const AssetImage(
-                              'assets/images/WhatsAppButtonGreenSmall.png'),
-                          fit: BoxFit.cover),
-                    )
-                  ],
+                          fixedSize: Size(screenWidth * 0.5, 50),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          // elevation: 100,
+                        ),
+                        child: Ink.image(
+                            padding: EdgeInsets.zero,
+                            image: const AssetImage(
+                                'assets/images/WhatsAppButtonGreenSmall.png'),
+                            fit: BoxFit.cover),
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

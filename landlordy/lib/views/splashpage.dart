@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:landlordy/models/user.dart';
+import 'package:landlordy/shared/loadingindicatorwidget.dart';
 import 'package:landlordy/shared/myserverconfig.dart';
 import 'package:landlordy/views/propertiespage.dart';
 import 'package:landlordy/views/welcomepage.dart';
@@ -38,11 +39,11 @@ class _SplashPageState extends State<SplashPage> {
           Spacer(
             flex: 2,
           ),
-          CircularProgressIndicator(),
+          LoadingIndicatorWidget(type: 1),
           Spacer(
             flex: 3,
           ),
-          Text("Version 0.1"),
+          Text("Version 2.1.0"),
           Spacer(
             flex: 1,
           )
@@ -65,12 +66,25 @@ class _SplashPageState extends State<SplashPage> {
           var data = jsonDecode(response.body);
           if (data['status'] == "success") {
             User user = User.fromJson(data['data']);
-            Timer(const Duration(seconds: 3), () {
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (content) => PropertiesPage(userdata: user)));
-            });
+            if (user.status == 'Active') {
+              Timer(const Duration(seconds: 3), () {
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (content) => PropertiesPage(userdata: user)));
+              });
+            } else {
+              Timer(
+                const Duration(seconds: 3),
+                () {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const WelcomePage(),
+                      ));
+                },
+              );
+            }
           } else {
             Timer(
               const Duration(seconds: 3),

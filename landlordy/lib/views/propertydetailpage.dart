@@ -5,6 +5,7 @@ import 'package:landlordy/edit_data/editpropertypage.dart';
 import 'package:landlordy/models/property.dart';
 import 'package:landlordy/models/tenant.dart';
 import 'package:landlordy/models/user.dart';
+import 'package:landlordy/shared/loadingindicatorwidget.dart';
 import 'package:landlordy/shared/myserverconfig.dart';
 import 'package:http/http.dart' as http;
 
@@ -105,6 +106,15 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
                     child: Image.network(
                       "${MyServerConfig.server}/landlordy/assets/properties/${widget.propertydetail.propertyId}_${index + 1}.png",
                       fit: BoxFit.cover,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) {
+                          return child;
+                        } else {
+                          return const Center(
+                            child: LoadingIndicatorWidget(type: 2),
+                          );
+                        }
+                      },
                     ),
                   ),
                 );
@@ -114,7 +124,7 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
           Expanded(
             child: Card(
               margin: const EdgeInsets.all(10),
-              color: Colors.lightBlue.shade100,
+              color: Colors.blue.shade100,
               elevation: 5,
               child: Container(
                 padding: const EdgeInsets.fromLTRB(5, 4, 5, 4),
@@ -233,7 +243,7 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
                               verticalAlignment:
                                   TableCellVerticalAlignment.middle,
                               child: Text(
-                                widget.propertydetail.propertyName.toString(),
+                                widget.propertydetail.propertyState.toString(),
                                 style: const TextStyle(
                                     fontSize: 22, fontWeight: FontWeight.w500),
                               ),
@@ -714,6 +724,7 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
             content: Text("Delete Success",
                 style: TextStyle(fontWeight: FontWeight.bold)),
             backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
           ));
           Navigator.of(context).pop();
         } else {
@@ -721,6 +732,7 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
             content: Text("Delete Failed",
                 style: TextStyle(fontWeight: FontWeight.bold)),
             backgroundColor: Colors.red,
+            duration: Duration(seconds: 2),
           ));
         }
       } else {
@@ -728,6 +740,7 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
           content: Text("Delete Failed",
               style: TextStyle(fontWeight: FontWeight.bold)),
           backgroundColor: Colors.red,
+          duration: Duration(seconds: 2),
         ));
       }
     });

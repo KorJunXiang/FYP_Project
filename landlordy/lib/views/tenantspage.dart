@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:landlordy/insert_data/addpropertypage.dart';
 import 'package:landlordy/models/tenant.dart';
 import 'package:landlordy/models/user.dart';
+import 'package:landlordy/shared/loadingindicatorwidget.dart';
 import 'package:landlordy/shared/myserverconfig.dart';
 import 'package:landlordy/shared/navbar.dart';
 import 'package:landlordy/views/tenantdetailpage.dart';
@@ -87,9 +88,7 @@ class _TenantsPageState extends State<TenantsPage> {
                       ],
                     ),
                     const SizedBox(height: 100),
-                    const CircularProgressIndicator(
-                      color: Colors.blue,
-                    ),
+                    const LoadingIndicatorWidget(type: 1),
                   ],
                 ),
               )
@@ -258,20 +257,24 @@ class _TenantsPageState extends State<TenantsPage> {
                         padding: const EdgeInsets.all(10),
                         child: Row(
                           children: [
+                            const Expanded(flex: 1, child: SizedBox()),
                             Expanded(
                                 flex: 4,
                                 child: Row(
                                   children: [
+                                    const SizedBox(width: 10),
                                     Image.asset(
                                       'assets/icons/tenant_name_icon.png',
                                       scale: 15,
                                     ),
                                     const SizedBox(width: 5),
-                                    const Text(
-                                      "Name",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w900,
-                                          fontSize: 25),
+                                    const Flexible(
+                                      child: Text(
+                                        "Name",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w900,
+                                            fontSize: 25),
+                                      ),
                                     ),
                                   ],
                                 )),
@@ -284,11 +287,13 @@ class _TenantsPageState extends State<TenantsPage> {
                                       scale: 15,
                                     ),
                                     const SizedBox(width: 5),
-                                    const Text(
-                                      "Gender",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w900,
-                                          fontSize: 25),
+                                    const Flexible(
+                                      child: Text(
+                                        "Gender",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w900,
+                                            fontSize: 25),
+                                      ),
                                     ),
                                   ],
                                 )),
@@ -301,11 +306,13 @@ class _TenantsPageState extends State<TenantsPage> {
                                       scale: 15,
                                     ),
                                     const SizedBox(width: 5),
-                                    const Text(
-                                      "Age",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w900,
-                                          fontSize: 25),
+                                    const Flexible(
+                                      child: Text(
+                                        "Age",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w900,
+                                            fontSize: 25),
+                                      ),
                                     ),
                                   ],
                                 )),
@@ -317,6 +324,7 @@ class _TenantsPageState extends State<TenantsPage> {
                         itemCount: tenantList.length,
                         itemBuilder: (context, index) {
                           return Container(
+                              height: screenHeight * 0.1,
                               decoration: BoxDecoration(
                                   color: Colors.blue.shade100,
                                   border: const Border(
@@ -326,12 +334,30 @@ class _TenantsPageState extends State<TenantsPage> {
                               child: Row(
                                 children: [
                                   Expanded(
-                                      flex: 4,
+                                    flex: 1,
+                                    child: CircleAvatar(
+                                      backgroundColor:
+                                          Theme.of(context).colorScheme.primary,
+                                      foregroundColor: Colors.white,
                                       child: Text(
-                                        tenantList[index].tenantName.toString(),
+                                        "${index + 1}",
                                         style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 20),
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                      flex: 4,
+                                      child: Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 10),
+                                        child: Text(
+                                          tenantList[index]
+                                              .tenantName
+                                              .toString(),
+                                          style: const TextStyle(fontSize: 20),
+                                        ),
                                       )),
                                   Expanded(
                                       flex: 3,
@@ -339,18 +365,14 @@ class _TenantsPageState extends State<TenantsPage> {
                                         tenantList[index]
                                             .tenantGender
                                             .toString(),
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 20),
+                                        style: const TextStyle(fontSize: 20),
                                       )),
                                   Expanded(
                                       flex: 1,
                                       child: Text(
                                         textAlign: TextAlign.center,
                                         tenantList[index].tenantAge.toString(),
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 20),
+                                        style: const TextStyle(fontSize: 20),
                                       )),
                                   Expanded(
                                       flex: 1,

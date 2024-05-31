@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,9 +9,11 @@ import 'package:landlordy/models/property.dart';
 import 'package:landlordy/models/rentalpayment.dart';
 import 'package:landlordy/models/tenant.dart';
 import 'package:landlordy/models/user.dart';
+import 'package:landlordy/shared/loadingindicatorwidget.dart';
 import 'package:landlordy/shared/myserverconfig.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 
 class PaymentDetailPage extends StatefulWidget {
   final User userdata;
@@ -29,6 +33,13 @@ class PaymentDetailPage extends StatefulWidget {
 
 class _PaymentDetailPageState extends State<PaymentDetailPage> {
   late double screenWidth, screenHeight;
+  File? _image;
+
+  @override
+  void initState() {
+    loadImage();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -108,14 +119,9 @@ class _PaymentDetailPageState extends State<PaymentDetailPage> {
                       if (loadingProgress == null) {
                         return child;
                       } else {
-                        double progress =
-                            loadingProgress.cumulativeBytesLoaded /
-                                (loadingProgress.expectedTotalBytes ?? 1);
-                        return Center(
-                            child: CircularProgressIndicator(
-                          value: progress,
-                          color: Colors.blue,
-                        ));
+                        return const Center(
+                          child: LoadingIndicatorWidget(type: 2),
+                        );
                       }
                     },
                   ),
@@ -132,10 +138,13 @@ class _PaymentDetailPageState extends State<PaymentDetailPage> {
                             scale: 20,
                           ),
                           const SizedBox(width: 5),
-                          Text(
-                            "${widget.propertydetail.propertyName}",
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 18),
+                          Flexible(
+                            child: Text(
+                              "${widget.propertydetail.propertyName}",
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 18),
+                              softWrap: true,
+                            ),
                           ),
                         ],
                       ),
@@ -147,10 +156,13 @@ class _PaymentDetailPageState extends State<PaymentDetailPage> {
                             scale: 20,
                           ),
                           const SizedBox(width: 5),
-                          Text(
-                            "${widget.tenantdetail.tenantName}",
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 18),
+                          Flexible(
+                            child: Text(
+                              "${widget.paymentdetail.tenantName}",
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 18),
+                              softWrap: true,
+                            ),
                           ),
                         ],
                       )
@@ -169,10 +181,13 @@ class _PaymentDetailPageState extends State<PaymentDetailPage> {
                             scale: 20,
                           ),
                           const SizedBox(width: 5),
-                          Text(
-                            "RM${widget.propertydetail.rentalPrice}",
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 18),
+                          Flexible(
+                            child: Text(
+                              "RM${widget.propertydetail.rentalPrice}",
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 18),
+                              softWrap: true,
+                            ),
                           ),
                         ],
                       )
@@ -199,21 +214,59 @@ class _PaymentDetailPageState extends State<PaymentDetailPage> {
               ],
             ),
           ),
+          Card(
+            elevation: 4,
+            color: Theme.of(context).colorScheme.primary,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
+              child: Text(
+                "Payment Amount: RM${widget.paymentdetail.paymentAmount}",
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
           Expanded(
               child: Card(
-            clipBehavior: Clip.antiAlias,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-                side: const BorderSide(color: Colors.black, width: 2)),
-            elevation: 5,
-            child: Image.network(
-              "${MyServerConfig.server}/landlordy/assets/payments/${widget.paymentdetail.propertyId}_${widget.paymentdetail.year}${widget.paymentdetail.month}.png",
-              fit: BoxFit.scaleDown,
-            ),
-          ))
+                  clipBehavior: Clip.antiAlias,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      side: const BorderSide(color: Colors.black, width: 2)),
+                  elevation: 5,
+                  child: _image != null
+                      ? Ink.image(
+                          image: FileImage(_image!),
+                          fit: BoxFit.scaleDown,
+                        )
+                      : const Center(
+                          child: LoadingIndicatorWidget(type: 2),
+                        )))
         ],
       ),
     );
+  }
+
+  Future<void> loadImage() async {
+    String imageUrl =
+        "${MyServerConfig.server}/landlordy/assets/payments/${widget.paymentdetail.propertyId}_${widget.paymentdetail.year}${widget.paymentdetail.month}.png";
+    _image = await urlToFile(imageUrl);
+    setState(() {});
+  }
+
+  Future<File> urlToFile(String imageUrl) async {
+    var rng = Random();
+    Directory tempDir = await getTemporaryDirectory();
+    String tempPath = tempDir.path;
+    File file = File('$tempPath${rng.nextInt(100)}.png');
+    http.Response response = await http.get(Uri.parse(imageUrl));
+    await file.writeAsBytes(response.bodyBytes);
+    return file;
   }
 
   void deleteDialog() {
@@ -313,6 +366,7 @@ class _PaymentDetailPageState extends State<PaymentDetailPage> {
             content: Text("Delete Success",
                 style: TextStyle(fontWeight: FontWeight.bold)),
             backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
           ));
           Navigator.of(context).pop();
         } else {
@@ -320,6 +374,7 @@ class _PaymentDetailPageState extends State<PaymentDetailPage> {
             content: Text("Delete Failed",
                 style: TextStyle(fontWeight: FontWeight.bold)),
             backgroundColor: Colors.red,
+            duration: Duration(seconds: 2),
           ));
         }
       } else {
@@ -327,6 +382,7 @@ class _PaymentDetailPageState extends State<PaymentDetailPage> {
           content: Text("Delete Failed",
               style: TextStyle(fontWeight: FontWeight.bold)),
           backgroundColor: Colors.red,
+          duration: Duration(seconds: 2),
         ));
       }
     });

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -28,6 +29,8 @@ class _AddMaintenancePageState extends State<AddMaintenancePage> {
   final _formKey = GlobalKey<FormState>();
   bool _isMaintenanceDescValid = true;
   bool _isCostValid = true;
+  bool _isPropertyValid = true;
+  bool _isMaintenanceValid = true;
   late double screenWidth, screenHeight;
   Set<String> uniquePropertyNames = {};
   List<String> propertyname = [];
@@ -68,7 +71,7 @@ class _AddMaintenancePageState extends State<AddMaintenancePage> {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: Colors.lightBlue.shade100,
+      backgroundColor: Colors.blue.shade100,
       appBar: AppBar(
         title: const Text(
           'Add Maintenance',
@@ -125,35 +128,62 @@ class _AddMaintenancePageState extends State<AddMaintenancePage> {
                           const SizedBox(
                             height: 10,
                           ),
-                          DropdownMenu<String>(
-                            expandedInsets: EdgeInsets.zero,
-                            controller: _propertynameEditingController,
-                            trailingIcon: const Icon(
-                                Icons.arrow_drop_down_rounded,
-                                color: Colors.black,
-                                size: 30),
-                            selectedTrailingIcon: const Icon(
-                                Icons.arrow_drop_up_rounded,
-                                color: Colors.black,
-                                size: 30),
-                            label: const Text(
-                              'Property Name',
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                          DropdownButtonFormField2<String>(
+                            style: TextStyle(
+                              fontSize: 17,
+                              color:
+                                  _isPropertyValid ? Colors.black : Colors.red,
                             ),
-                            inputDecorationTheme: const InputDecorationTheme(
+                            isExpanded: true,
+                            menuItemStyleData: const MenuItemStyleData(
+                              padding: EdgeInsets.only(left: 10),
+                            ),
+                            iconStyleData: const IconStyleData(
+                                openMenuIcon: Icon(Icons.arrow_drop_up_rounded,
+                                    color: Colors.black),
+                                icon: Icon(Icons.arrow_drop_down_rounded,
+                                    color: Colors.black),
+                                iconSize: 30),
+                            dropdownStyleData: DropdownStyleData(
+                              maxHeight: 200,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            decoration: InputDecoration(
+                              label: const Text(
+                                'Property Name',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              errorStyle: const TextStyle(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.bold,
+                                  fontStyle: FontStyle.italic,
+                                  fontSize: 16),
                               border: OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10))),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
                             ),
-                            dropdownMenuEntries:
-                                propertyname.map((String items) {
-                              return DropdownMenuEntry<String>(
+                            items: propertyname.map((String items) {
+                              return DropdownMenuItem<String>(
                                 value: items,
-                                label: items,
+                                child: Text(items),
                               );
                             }).toList(),
-                            menuHeight: 200,
-                            onSelected: (String? newValue) {
+                            validator: (value) {
+                              if (value == null) {
+                                setState(() {
+                                  _isPropertyValid = false;
+                                });
+                                return 'Select property';
+                              } else {
+                                setState(() {
+                                  _isPropertyValid = true;
+                                });
+                                return null;
+                              }
+                            },
+                            onChanged: (newValue) {
                               setState(() {
                                 _propertynameEditingController.text = newValue!;
                                 for (PropertyTenant tenant
@@ -190,35 +220,63 @@ class _AddMaintenancePageState extends State<AddMaintenancePage> {
                           const SizedBox(
                             height: 10,
                           ),
-                          DropdownMenu<String>(
-                            expandedInsets: EdgeInsets.zero,
-                            controller: _maintenancetypeEditingController,
-                            trailingIcon: const Icon(
-                                Icons.arrow_drop_down_rounded,
-                                color: Colors.black,
-                                size: 30),
-                            selectedTrailingIcon: const Icon(
-                                Icons.arrow_drop_up_rounded,
-                                color: Colors.black,
-                                size: 30),
-                            label: const Text(
-                              'Maintenance Type',
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                          DropdownButtonFormField2<String>(
+                            style: TextStyle(
+                              fontSize: 17,
+                              color: _isMaintenanceValid
+                                  ? Colors.black
+                                  : Colors.red,
                             ),
-                            inputDecorationTheme: const InputDecorationTheme(
+                            isExpanded: true,
+                            menuItemStyleData: const MenuItemStyleData(
+                              padding: EdgeInsets.only(left: 10),
+                            ),
+                            iconStyleData: const IconStyleData(
+                                openMenuIcon: Icon(Icons.arrow_drop_up_rounded,
+                                    color: Colors.black),
+                                icon: Icon(Icons.arrow_drop_down_rounded,
+                                    color: Colors.black),
+                                iconSize: 30),
+                            dropdownStyleData: DropdownStyleData(
+                              maxHeight: 200,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            decoration: InputDecoration(
+                              label: const Text(
+                                'Maintenance Type',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              errorStyle: const TextStyle(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.bold,
+                                  fontStyle: FontStyle.italic,
+                                  fontSize: 16),
                               border: OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10))),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
                             ),
-                            dropdownMenuEntries:
-                                maintenancetype.map((String items) {
-                              return DropdownMenuEntry<String>(
+                            items: maintenancetype.map((String items) {
+                              return DropdownMenuItem<String>(
                                 value: items,
-                                label: items,
+                                child: Text(items),
                               );
                             }).toList(),
-                            menuHeight: 200,
-                            onSelected: (String? newValue) {
+                            validator: (value) {
+                              if (value == null) {
+                                setState(() {
+                                  _isMaintenanceValid = false;
+                                });
+                                return 'Select maintenance type';
+                              } else {
+                                setState(() {
+                                  _isMaintenanceValid = true;
+                                });
+                                return null;
+                              }
+                            },
+                            onChanged: (newValue) {
                               setState(() {
                                 _maintenancetypeEditingController.text =
                                     newValue!;
@@ -399,6 +457,7 @@ class _AddMaintenancePageState extends State<AddMaintenancePage> {
         content: Text("Check your input",
             style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: Colors.red,
+        duration: Duration(seconds: 2),
       ));
       return;
     }
@@ -505,6 +564,7 @@ class _AddMaintenancePageState extends State<AddMaintenancePage> {
             content: Text("Insert Success",
                 style: TextStyle(fontWeight: FontWeight.bold)),
             backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
           ));
           Navigator.of(context).pop();
           Navigator.of(context).pop();
@@ -513,6 +573,7 @@ class _AddMaintenancePageState extends State<AddMaintenancePage> {
             content: Text("Insert Failed",
                 style: TextStyle(fontWeight: FontWeight.bold)),
             backgroundColor: Colors.red,
+            duration: Duration(seconds: 2),
           ));
         }
       } else {
@@ -520,6 +581,7 @@ class _AddMaintenancePageState extends State<AddMaintenancePage> {
           content: Text("Insert Failed",
               style: TextStyle(fontWeight: FontWeight.bold)),
           backgroundColor: Colors.red,
+          duration: Duration(seconds: 2),
         ));
       }
     });

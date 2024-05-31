@@ -1,10 +1,12 @@
 import 'dart:convert';
+// ignore: unused_import
 import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:landlordy/models/event.dart';
 import 'package:landlordy/models/user.dart';
+import 'package:landlordy/shared/loadingindicatorwidget.dart';
 import 'package:landlordy/shared/myserverconfig.dart';
 import 'package:landlordy/shared/navbar.dart';
 import 'package:http/http.dart' as http;
@@ -62,132 +64,122 @@ class _EventsPageState extends State<EventsPage> {
             ),
           ),
         ),
-        body: isLoading
-            ? Center(
-                child: Column(
-                  children: [
-                    SizedBox(height: screenHeight * 0.1),
-                    const CircularProgressIndicator(
-                      color: Colors.blue,
-                    ),
-                  ],
-                ),
-              )
-            : (eventList.isEmpty)
-                ? Center(
-                    child: RefreshIndicator(
-                      onRefresh: _refresh,
-                      child: ListView(
-                        children: [
-                          Column(
-                            children: [
-                              SizedBox(height: screenHeight * 0.05),
-                              Card(
-                                elevation: 4,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                color: Colors.grey.shade300,
-                                child: Container(
-                                  height: screenHeight * 0.15,
-                                  width: screenWidth * 0.9,
-                                  padding: const EdgeInsets.all(10),
-                                  child: const Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        'No Events',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w900,
-                                          fontSize: 25,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                      Text(
-                                        'You don\'t have any event yet.',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.black54,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                : Column(
+        body: RefreshIndicator(
+          onRefresh: _refresh,
+          child: isLoading
+              ? Center(
+                  child: Column(
                     children: [
-                      Expanded(
-                          child: ListView.builder(
-                        itemCount: eventList.length,
-                        itemBuilder: (context, index) {
-                          return GestureDetector(
-                            onTap: () {
-                              showEvent(eventList[index]);
-                            },
-                            child: Container(
-                              height: screenHeight * 0.12,
-                              decoration: BoxDecoration(
-                                  color: Colors.blue.shade100,
-                                  border: const Border(
-                                      bottom: BorderSide(
-                                          color: Colors.black, width: 2))),
-                              padding:
-                                  const EdgeInsets.fromLTRB(15, 10, 15, 10),
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        eventList[index].title.toString(),
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 22,
-                                        ),
-                                      ),
-                                      Text(
-                                        formatDate(eventList[index]
-                                            .eventDate
-                                            .toString()),
-                                        style: const TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                    ],
+                      SizedBox(height: screenHeight * 0.1),
+                      const LoadingIndicatorWidget(type: 1),
+                    ],
+                  ),
+                )
+              : (eventList.isEmpty)
+                  ? Center(
+                      child: RefreshIndicator(
+                        onRefresh: _refresh,
+                        child: ListView(
+                          children: [
+                            Column(
+                              children: [
+                                SizedBox(height: screenHeight * 0.05),
+                                Card(
+                                  elevation: 4,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
                                   ),
-                                  SizedBox(
-                                    width: screenWidth * 0.7,
-                                    child: Text(
-                                      eventList[index].description.toString(),
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18,
-                                        color: Colors.black,
-                                      ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
+                                  color: Colors.grey.shade300,
+                                  child: Container(
+                                    height: screenHeight * 0.15,
+                                    width: screenWidth * 0.9,
+                                    padding: const EdgeInsets.all(10),
+                                    child: const Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          'No Events',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w900,
+                                            fontSize: 25,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                        Text(
+                                          'You don\'t have any event yet.',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.black54,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                          );
-                        },
-                      )),
-                    ],
-                  ));
+                          ],
+                        ),
+                      ),
+                    )
+                  : Column(
+                      children: [
+                        Expanded(
+                            child: ListView.builder(
+                          padding: const EdgeInsets.all(10),
+                          itemCount: eventList.length,
+                          itemBuilder: (context, index) {
+                            return SizedBox(
+                              height: screenHeight * 0.1,
+                              child: Card(
+                                color: Colors.blue.shade100,
+                                child: ListTile(
+                                  onTap: () {
+                                    showEvent(eventList[index]);
+                                  },
+                                  leading: CircleAvatar(
+                                    backgroundColor:
+                                        Theme.of(context).colorScheme.primary,
+                                    foregroundColor: Colors.white,
+                                    child: Text(
+                                      "${index + 1}",
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                  title: Text(
+                                    eventList[index].title.toString(),
+                                    maxLines: 1,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  subtitle: Text(
+                                    eventList[index].description.toString(),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  trailing: Text(
+                                    formatDate(
+                                        eventList[index].eventDate.toString()),
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        )),
+                      ],
+                    ),
+        ));
   }
 
   void showEvent(Event event) {
@@ -298,7 +290,7 @@ class _EventsPageState extends State<EventsPage> {
         Uri.parse(
             "${MyServerConfig.server}/landlordy/php/event/load_event.php"),
         body: {"userid": widget.userdata.userid});
-    log(responseEvents.body);
+    // log(responseEvents.body);
     eventList.clear();
     if (responseEvents.statusCode == 200) {
       var jsondataevent = jsonDecode(responseEvents.body);

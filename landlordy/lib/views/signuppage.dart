@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:landlordy/shared/myserverconfig.dart';
@@ -53,17 +54,6 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
         ),
         centerTitle: true,
-        leading: GestureDetector(
-          onTap: () {
-            Navigator.of(context).pop();
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Image.asset(
-              'assets/icons/back_icon.png',
-            ),
-          ),
-        ),
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.black,
       ),
@@ -281,47 +271,56 @@ class _SignUpPageState extends State<SignUpPage> {
                                 const SizedBox(
                                   height: 5,
                                 ),
-                                const Text(
-                                  'I have read and agree to the ',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 13,
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: _showEULA,
-                                  child: const Text(
-                                    'Privacy Policy',
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                      decoration: TextDecoration.underline,
-                                      decorationColor:
-                                          Color.fromARGB(255, 1, 8, 220),
-                                      color: Color.fromARGB(255, 1, 8, 220),
+                                Flexible(
+                                  child: RichText(
+                                    text: TextSpan(
+                                      text: 'I have read and agree to the ',
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 13,
+                                        color: Colors.black,
+                                      ),
+                                      children: [
+                                        TextSpan(
+                                            text: 'Privacy Policy',
+                                            style: const TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.bold,
+                                              decoration:
+                                                  TextDecoration.underline,
+                                              decorationColor: Color.fromARGB(
+                                                  255, 1, 8, 220),
+                                              color: Color.fromARGB(
+                                                  255, 1, 8, 220),
+                                            ),
+                                            recognizer: TapGestureRecognizer()
+                                              ..onTap = _showEULA),
+                                        const TextSpan(
+                                          text: ' and ',
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: 'Term of Use',
+                                          style: const TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.bold,
+                                            decoration:
+                                                TextDecoration.underline,
+                                            decorationColor:
+                                                Color.fromARGB(255, 1, 8, 220),
+                                            color:
+                                                Color.fromARGB(255, 1, 8, 220),
+                                          ),
+                                          recognizer: TapGestureRecognizer()
+                                            ..onTap = _showEULA,
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                ),
-                                const Text(
-                                  ' and ',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: _showEULA,
-                                  child: const Text(
-                                    'Term of Use',
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                      decoration: TextDecoration.underline,
-                                      decorationColor:
-                                          Color.fromARGB(255, 1, 8, 220),
-                                      color: Color.fromARGB(255, 1, 8, 220),
-                                    ),
-                                  ),
-                                ),
+                                )
                               ],
                             ),
                             const SizedBox(
@@ -391,7 +390,7 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   String? validatePassword(String value) {
-    String pattern = r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$';
+    String pattern = r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).*$';
     RegExp regex = RegExp(pattern);
     if (value.isEmpty) {
       setState(() {
@@ -403,7 +402,7 @@ class _SignUpPageState extends State<SignUpPage> {
         setState(() {
           _isPassValid = false;
         });
-        return 'Enter a valid password';
+        return 'Enter a valid password\nPassword must contain at least\n- One uppercase letter\n- One lowercase letter \n- One digit';
       } else {
         setState(() {
           _isPassValid = true;
@@ -423,6 +422,7 @@ class _SignUpPageState extends State<SignUpPage> {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.red,
+        duration: Duration(seconds: 2),
       ));
       return;
     }
@@ -433,6 +433,7 @@ class _SignUpPageState extends State<SignUpPage> {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.red,
+        duration: Duration(seconds: 2),
       ));
       return;
     }
@@ -446,6 +447,7 @@ class _SignUpPageState extends State<SignUpPage> {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.red,
+        duration: Duration(seconds: 2),
       ));
       return;
     }
@@ -475,10 +477,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        _registerUser();
-                      },
+                      onPressed: _registerUser,
                       style: ElevatedButton.styleFrom(
                         fixedSize: const Size(90, 40),
                         backgroundColor: Colors.green,
@@ -499,12 +498,6 @@ class _SignUpPageState extends State<SignUpPage> {
                     ElevatedButton(
                       onPressed: () {
                         Navigator.of(context).pop();
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(const SnackBar(
-                          content: Text("Registration Cancelled",
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                          backgroundColor: Colors.red,
-                        ));
                       },
                       style: ElevatedButton.styleFrom(
                         fixedSize: const Size(90, 40),
@@ -582,12 +575,12 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  void _registerUser() {
+  Future<void> _registerUser() async {
     String name = _nameEditingController.text;
     String email = _emailEditingController.text;
     String pass = _pass1EditingController.text;
 
-    http.post(
+    await http.post(
         Uri.parse(
             "${MyServerConfig.server}/landlordy/php/user/register_user.php"),
         body: {
@@ -600,20 +593,25 @@ class _SignUpPageState extends State<SignUpPage> {
         if (data['status'] == "success") {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text(
-              "Registration Success",
+              "Registration Success\nPlease Check Your Email",
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
           ));
+          Navigator.of(context).pop();
           Navigator.pushReplacement(context,
               MaterialPageRoute(builder: (content) => const LoginPage()));
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          String message = data['message'];
+          Navigator.of(context).pop();
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(
-              "Registration Failed",
-              style: TextStyle(fontWeight: FontWeight.bold),
+              message,
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             backgroundColor: Colors.red,
+            duration: const Duration(seconds: 2),
           ));
         }
       }

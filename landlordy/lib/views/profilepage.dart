@@ -4,9 +4,11 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:landlordy/edit_data/editprofilepage.dart';
 import 'package:landlordy/models/user.dart';
+import 'package:landlordy/shared/loadingindicatorwidget.dart';
 import 'package:landlordy/shared/myserverconfig.dart';
 import 'package:landlordy/shared/navbar.dart';
 import 'package:http/http.dart' as http;
+import 'package:landlordy/views/passwordforgotpage.dart';
 
 // ignore: must_be_immutable
 class ProfilePage extends StatefulWidget {
@@ -27,6 +29,7 @@ class _ProfilePageState extends State<ProfilePage> {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
+      backgroundColor: Colors.lightBlue.shade50,
       key: scaffoldKey,
       drawer: NavBar(
         userdata: widget.userdata,
@@ -89,13 +92,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     if (loadingProgress == null) {
                       return child;
                     } else {
-                      double progress = loadingProgress.cumulativeBytesLoaded /
-                          (loadingProgress.expectedTotalBytes ?? 1);
-                      return Center(
-                          child: CircularProgressIndicator(
-                        value: progress,
-                        color: Colors.blue,
-                      ));
+                      return const Center(
+                        child: LoadingIndicatorWidget(type: 2),
+                      );
                     }
                   },
                   errorBuilder: (context, error, stackTrace) {
@@ -124,16 +123,20 @@ class _ProfilePageState extends State<ProfilePage> {
                             color: Colors.blue.shade100,
                           ),
                           padding: const EdgeInsets.all(8),
-                          child: Row(
-                            children: [
-                              Text(
-                                widget.userdata.username.toString(),
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 30,
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  widget.userdata.username.toString(),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 30,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -151,21 +154,25 @@ class _ProfilePageState extends State<ProfilePage> {
                           height: 80,
                           margin: const EdgeInsets.fromLTRB(10, 0, 0, 0),
                           decoration: BoxDecoration(
+                            color: Colors.blue.shade100,
                             border: Border.all(color: Colors.black, width: 2),
                             borderRadius: BorderRadius.circular(10),
-                            color: Colors.blue.shade100,
                           ),
                           padding: const EdgeInsets.all(8),
-                          child: Row(
-                            children: [
-                              Text(
-                                widget.userdata.useremail.toString(),
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 30,
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  widget.userdata.useremail.toString(),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 30,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -173,9 +180,15 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   const SizedBox(height: 20),
                   ElevatedButton.icon(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const PasswordForgotPage(),
+                          ));
+                    },
                     style: ElevatedButton.styleFrom(
-                      fixedSize: Size(screenWidth * 0.6, 60),
+                      fixedSize: const Size.fromHeight(60),
                       backgroundColor: Colors.blue,
                       elevation: 4,
                       shape: RoundedRectangleBorder(

@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:landlordy/models/user.dart';
 import 'dart:developer';
 import 'package:http/http.dart' as http;
+import 'package:landlordy/shared/loadingindicatorwidget.dart';
 import 'package:landlordy/shared/myserverconfig.dart';
 
 class EditProfilePage extends StatefulWidget {
@@ -44,7 +45,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: Colors.blue.shade50,
+      backgroundColor: Colors.blue.shade100,
       appBar: AppBar(
         title: const Text(
           'Edit Profile',
@@ -93,14 +94,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                 if (loadingProgress == null) {
                                   return child;
                                 } else {
-                                  double progress = loadingProgress
-                                          .cumulativeBytesLoaded /
-                                      (loadingProgress.expectedTotalBytes ?? 1);
-                                  return Center(
-                                      child: CircularProgressIndicator(
-                                    value: progress,
-                                    color: Colors.blue,
-                                  ));
+                                  return const Center(
+                                    child: LoadingIndicatorWidget(type: 2),
+                                  );
                                 }
                               },
                               errorBuilder: (context, error, stackTrace) {
@@ -388,6 +384,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         content: Text("Check your input",
             style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: Colors.red,
+        duration: Duration(seconds: 2),
       ));
       return;
     }
@@ -494,6 +491,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             content: Text("Update Success",
                 style: TextStyle(fontWeight: FontWeight.bold)),
             backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
           ));
           Navigator.of(context).pop();
           Navigator.of(context).pop();
@@ -502,6 +500,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             content: Text("Update Failed",
                 style: TextStyle(fontWeight: FontWeight.bold)),
             backgroundColor: Colors.red,
+            duration: Duration(seconds: 2),
           ));
         }
       } else {
@@ -509,6 +508,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           content: Text("Update Failed",
               style: TextStyle(fontWeight: FontWeight.bold)),
           backgroundColor: Colors.red,
+          duration: Duration(seconds: 2),
         ));
       }
     });

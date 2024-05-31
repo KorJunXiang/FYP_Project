@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -11,6 +12,7 @@ import 'package:landlordy/models/property.dart';
 import 'package:landlordy/models/tenant.dart';
 import 'package:landlordy/models/user.dart';
 import 'package:http/http.dart' as http;
+import 'package:landlordy/shared/loadingindicatorwidget.dart';
 import 'package:landlordy/shared/myserverconfig.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -51,6 +53,9 @@ class _EditPropertyPageState extends State<EditPropertyPage> {
   File? _image;
   final List<File> _imageList = [];
   final _formKey = GlobalKey<FormState>();
+  bool _isGenderValid = true;
+  bool _isCategoryValid = true;
+  bool _isTypeValid = true;
   bool _isPropertyNameValid = true;
   bool _isAddressValid = true;
   bool _isStateValid = true;
@@ -60,6 +65,8 @@ class _EditPropertyPageState extends State<EditPropertyPage> {
   bool _isAgeValid = true;
   bool _isPhoneValid = true;
   bool _gotTenant = false;
+  String selectedgender = "";
+  String selectedcategory = "";
   var propertytype = ['Landed', 'Highrise', 'Room'];
   var gender = ['Male', 'Female'];
   var category = ['Single', 'Family', 'Commercial'];
@@ -78,7 +85,6 @@ class _EditPropertyPageState extends State<EditPropertyPage> {
     super.initState();
     loadImageList();
     loadText();
-    print(widget.tenantdetail.tenantId);
   }
 
   @override
@@ -102,7 +108,7 @@ class _EditPropertyPageState extends State<EditPropertyPage> {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: Colors.lightBlue.shade100,
+      backgroundColor: Colors.blue.shade100,
       appBar: AppBar(
         title: const Text(
           'Edit Property',
@@ -127,9 +133,7 @@ class _EditPropertyPageState extends State<EditPropertyPage> {
       ),
       body: _imageList.isEmpty
           ? const Center(
-              child: CircularProgressIndicator(
-                color: Colors.blue,
-              ),
+              child: LoadingIndicatorWidget(type: 1),
             )
           : Form(
               key: _formKey,
@@ -356,41 +360,80 @@ class _EditPropertyPageState extends State<EditPropertyPage> {
                                           scale: 22,
                                           alignment: Alignment.centerLeft,
                                         ),
+                                        const SizedBox(width: 10),
                                         Expanded(
-                                          child: DropdownMenu<String>(
-                                            expandedInsets:
-                                                const EdgeInsets.fromLTRB(
-                                                    10, 0, 0, 0),
-                                            controller:
-                                                _propertytypeEditingController,
-                                            trailingIcon: const Icon(
-                                                Icons.arrow_drop_down_rounded,
-                                                color: Colors.black,
-                                                size: 30),
-                                            selectedTrailingIcon: const Icon(
-                                                Icons.arrow_drop_up_rounded,
-                                                color: Colors.black,
-                                                size: 30),
-                                            label: const Text(
-                                              'Type',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold),
+                                          child:
+                                              DropdownButtonFormField2<String>(
+                                            value:
+                                                _propertytypeEditingController
+                                                    .text,
+                                            style: TextStyle(
+                                              fontSize: 17,
+                                              color: _isTypeValid
+                                                  ? Colors.black
+                                                  : Colors.red,
                                             ),
-                                            inputDecorationTheme:
-                                                const InputDecorationTheme(
+                                            isExpanded: true,
+                                            menuItemStyleData:
+                                                const MenuItemStyleData(
+                                              padding:
+                                                  EdgeInsets.only(left: 10),
+                                            ),
+                                            iconStyleData: const IconStyleData(
+                                                openMenuIcon: Icon(
+                                                    Icons.arrow_drop_up_rounded,
+                                                    color: Colors.black),
+                                                icon: Icon(
+                                                    Icons
+                                                        .arrow_drop_down_rounded,
+                                                    color: Colors.black),
+                                                iconSize: 30),
+                                            dropdownStyleData:
+                                                DropdownStyleData(
+                                              maxHeight: 200,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+                                            ),
+                                            decoration: InputDecoration(
+                                              label: const Text(
+                                                'Type',
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              errorStyle: const TextStyle(
+                                                  color: Colors.red,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontStyle: FontStyle.italic,
+                                                  fontSize: 16),
                                               border: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(10))),
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
                                             ),
-                                            dropdownMenuEntries: propertytype
+                                            items: propertytype
                                                 .map((String items) {
-                                              return DropdownMenuEntry<String>(
+                                              return DropdownMenuItem<String>(
                                                 value: items,
-                                                label: items,
+                                                child: Text(items),
                                               );
                                             }).toList(),
-                                            onSelected: (String? newValue) {
+                                            validator: (value) {
+                                              if (value == null) {
+                                                setState(() {
+                                                  _isTypeValid = false;
+                                                });
+                                                return 'Select type';
+                                              } else {
+                                                setState(() {
+                                                  _isTypeValid = true;
+                                                });
+                                                return null;
+                                              }
+                                            },
+                                            onChanged: (newValue) {
                                               setState(() {
                                                 _propertytypeEditingController
                                                     .text = newValue!;
@@ -581,52 +624,92 @@ class _EditPropertyPageState extends State<EditPropertyPage> {
                                             scale: 22,
                                             alignment: Alignment.centerLeft,
                                           ),
+                                          const SizedBox(width: 16),
                                           Expanded(
-                                            flex: 5,
-                                            child: DropdownMenu<String>(
-                                              expandedInsets:
-                                                  const EdgeInsets.fromLTRB(
-                                                      16, 0, 10, 0),
-                                              controller:
-                                                  _genderEditingController,
-                                              trailingIcon: const Icon(
-                                                  Icons.arrow_drop_down_rounded,
-                                                  color: Colors.black,
-                                                  size: 30),
-                                              selectedTrailingIcon: const Icon(
-                                                  Icons.arrow_drop_up_rounded,
-                                                  color: Colors.black,
-                                                  size: 30),
-                                              label: const Text(
-                                                'Gender',
+                                              flex: 5,
+                                              child: DropdownButtonFormField2<
+                                                  String>(
+                                                value: selectedgender,
                                                 style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              inputDecorationTheme:
-                                                  const InputDecorationTheme(
-                                                border: OutlineInputBorder(
+                                                  fontSize: 17,
+                                                  color: _isGenderValid
+                                                      ? Colors.black
+                                                      : Colors.red,
+                                                ),
+                                                isExpanded: true,
+                                                menuItemStyleData:
+                                                    const MenuItemStyleData(
+                                                  padding:
+                                                      EdgeInsets.only(left: 10),
+                                                ),
+                                                iconStyleData: const IconStyleData(
+                                                    openMenuIcon: Icon(
+                                                        Icons
+                                                            .arrow_drop_up_rounded,
+                                                        color: Colors.black),
+                                                    icon: Icon(
+                                                        Icons
+                                                            .arrow_drop_down_rounded,
+                                                        color: Colors.black),
+                                                    iconSize: 30),
+                                                dropdownStyleData:
+                                                    DropdownStyleData(
+                                                  maxHeight: 200,
+                                                  decoration: BoxDecoration(
                                                     borderRadius:
-                                                        BorderRadius.all(
-                                                            Radius.circular(
-                                                                10))),
-                                              ),
-                                              dropdownMenuEntries:
-                                                  gender.map((String items) {
-                                                return DropdownMenuEntry<
-                                                    String>(
-                                                  value: items,
-                                                  label: items,
-                                                );
-                                              }).toList(),
-                                              onSelected: (String? newValue) {
-                                                setState(() {
-                                                  _genderEditingController
-                                                      .text = newValue!;
-                                                });
-                                              },
-                                            ),
-                                          ),
+                                                        BorderRadius.circular(
+                                                            10),
+                                                  ),
+                                                ),
+                                                decoration: InputDecoration(
+                                                  label: const Text(
+                                                    'Gender',
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  errorStyle: const TextStyle(
+                                                      color: Colors.red,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontStyle:
+                                                          FontStyle.italic,
+                                                      fontSize: 16),
+                                                  border: OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                  ),
+                                                ),
+                                                items:
+                                                    gender.map((String items) {
+                                                  return DropdownMenuItem<
+                                                      String>(
+                                                    value: items,
+                                                    child: Text(items),
+                                                  );
+                                                }).toList(),
+                                                validator: (value) {
+                                                  if (value == null) {
+                                                    setState(() {
+                                                      _isGenderValid = false;
+                                                    });
+                                                    return 'Select gender';
+                                                  } else {
+                                                    setState(() {
+                                                      _isGenderValid = true;
+                                                    });
+                                                    return null;
+                                                  }
+                                                },
+                                                onChanged: (newValue) {
+                                                  setState(() {
+                                                    _genderEditingController
+                                                        .text = newValue!;
+                                                  });
+                                                },
+                                              )),
+                                          const SizedBox(width: 10),
                                           Image.asset(
                                             'assets/icons/age_icon.png',
                                             scale: 22,
@@ -687,45 +770,79 @@ class _EditPropertyPageState extends State<EditPropertyPage> {
                                             scale: 22,
                                             alignment: Alignment.centerLeft,
                                           ),
+                                          const SizedBox(width: 16),
                                           Expanded(
-                                            flex: 5,
-                                            child: DropdownMenu<String>(
-                                              expandedInsets:
-                                                  const EdgeInsets.fromLTRB(
-                                                      16, 0, 0, 0),
-                                              controller:
-                                                  _categoryEditingController,
-                                              trailingIcon: const Icon(
-                                                  Icons.arrow_drop_down_rounded,
-                                                  color: Colors.black,
-                                                  size: 30),
-                                              selectedTrailingIcon: const Icon(
-                                                  Icons.arrow_drop_up_rounded,
-                                                  color: Colors.black,
-                                                  size: 30),
-                                              label: const Text(
-                                                'Category',
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold),
+                                            child: DropdownButtonFormField2<
+                                                String>(
+                                              value: selectedcategory,
+                                              style: TextStyle(
+                                                fontSize: 17,
+                                                color: _isCategoryValid
+                                                    ? Colors.black
+                                                    : Colors.red,
                                               ),
-                                              inputDecorationTheme:
-                                                  const InputDecorationTheme(
+                                              isExpanded: true,
+                                              menuItemStyleData:
+                                                  const MenuItemStyleData(
+                                                padding:
+                                                    EdgeInsets.only(left: 10),
+                                              ),
+                                              iconStyleData: const IconStyleData(
+                                                  openMenuIcon: Icon(
+                                                      Icons
+                                                          .arrow_drop_up_rounded,
+                                                      color: Colors.black),
+                                                  icon: Icon(
+                                                      Icons
+                                                          .arrow_drop_down_rounded,
+                                                      color: Colors.black),
+                                                  iconSize: 30),
+                                              dropdownStyleData:
+                                                  DropdownStyleData(
+                                                maxHeight: 200,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                ),
+                                              ),
+                                              decoration: InputDecoration(
+                                                label: const Text(
+                                                  'Category',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                errorStyle: const TextStyle(
+                                                    color: Colors.red,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontStyle: FontStyle.italic,
+                                                    fontSize: 16),
                                                 border: OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.all(
-                                                            Radius.circular(
-                                                                10))),
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                ),
                                               ),
-                                              dropdownMenuEntries:
+                                              items:
                                                   category.map((String items) {
-                                                return DropdownMenuEntry<
-                                                    String>(
+                                                return DropdownMenuItem<String>(
                                                   value: items,
-                                                  label: items,
+                                                  child: Text(items),
                                                 );
                                               }).toList(),
-                                              onSelected: (String? newValue) {
+                                              validator: (value) {
+                                                if (value == null) {
+                                                  setState(() {
+                                                    _isCategoryValid = false;
+                                                  });
+                                                  return 'Select category';
+                                                } else {
+                                                  setState(() {
+                                                    _isCategoryValid = true;
+                                                  });
+                                                  return null;
+                                                }
+                                              },
+                                              onChanged: (newValue) {
                                                 setState(() {
                                                   _categoryEditingController
                                                       .text = newValue!;
@@ -955,6 +1072,7 @@ class _EditPropertyPageState extends State<EditPropertyPage> {
         content: Text("Check your input",
             style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: Colors.red,
+        duration: Duration(seconds: 2),
       ));
       return;
     }
@@ -1056,7 +1174,7 @@ class _EditPropertyPageState extends State<EditPropertyPage> {
     return file;
   }
 
-  void loadText() {
+  Future<void> loadText() async {
     _propertynameEditingController.text =
         widget.propertydetail.propertyName.toString();
     _addressEditingController.text =
@@ -1079,6 +1197,14 @@ class _EditPropertyPageState extends State<EditPropertyPage> {
       _phoneEditingController.text = widget.tenantdetail.tenantPhone.toString();
       _gotTenant = true;
     }
+    if (_gotTenant) {
+      selectedgender = widget.tenantdetail.tenantGender.toString();
+      selectedcategory = widget.tenantdetail.tenantCategory.toString();
+    } else {
+      selectedgender = "Male";
+      selectedcategory = "Single";
+    }
+    setState(() {});
   }
 
   void updateProperty() {
@@ -1151,6 +1277,7 @@ class _EditPropertyPageState extends State<EditPropertyPage> {
             content: Text("Update Success",
                 style: TextStyle(fontWeight: FontWeight.bold)),
             backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
           ));
           Navigator.of(context).pop();
           Navigator.of(context).pop();
@@ -1160,6 +1287,7 @@ class _EditPropertyPageState extends State<EditPropertyPage> {
             content: Text("Update Failed",
                 style: TextStyle(fontWeight: FontWeight.bold)),
             backgroundColor: Colors.red,
+            duration: Duration(seconds: 2),
           ));
         }
       } else {
@@ -1167,6 +1295,7 @@ class _EditPropertyPageState extends State<EditPropertyPage> {
           content: Text("Update Failed",
               style: TextStyle(fontWeight: FontWeight.bold)),
           backgroundColor: Colors.red,
+          duration: Duration(seconds: 2),
         ));
       }
     });

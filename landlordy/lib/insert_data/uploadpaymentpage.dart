@@ -54,7 +54,7 @@ class _UploadPaymentPageState extends State<UploadPaymentPage> {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: Colors.lightBlue.shade100,
+      backgroundColor: Colors.blue.shade100,
       appBar: AppBar(
         title: const Text(
           'Upload Payment',
@@ -431,6 +431,7 @@ class _UploadPaymentPageState extends State<UploadPaymentPage> {
         content: Text("Check your input",
             style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: Colors.red,
+        duration: Duration(seconds: 2),
       ));
       return;
     }
@@ -439,6 +440,7 @@ class _UploadPaymentPageState extends State<UploadPaymentPage> {
         content: Text("Please take picture",
             style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: Colors.red,
+        duration: Duration(seconds: 2),
       ));
       return;
     }
@@ -547,6 +549,7 @@ class _UploadPaymentPageState extends State<UploadPaymentPage> {
             content: Text("Upload Success",
                 style: TextStyle(fontWeight: FontWeight.bold)),
             backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
           ));
           Navigator.of(context).pop();
           Navigator.of(context).pop();
@@ -555,6 +558,7 @@ class _UploadPaymentPageState extends State<UploadPaymentPage> {
             content: Text("Upload Failed",
                 style: TextStyle(fontWeight: FontWeight.bold)),
             backgroundColor: Colors.red,
+            duration: Duration(seconds: 2),
           ));
         }
       } else {
@@ -562,6 +566,7 @@ class _UploadPaymentPageState extends State<UploadPaymentPage> {
           content: Text("Upload Failed",
               style: TextStyle(fontWeight: FontWeight.bold)),
           backgroundColor: Colors.red,
+          duration: Duration(seconds: 2),
         ));
       }
     });
@@ -595,6 +600,7 @@ class _UploadPaymentPageState extends State<UploadPaymentPage> {
             content: Text("Upload Success",
                 style: TextStyle(fontWeight: FontWeight.bold)),
             backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
           ));
           Navigator.of(context).pop();
           Navigator.of(context).pop();
@@ -603,6 +609,7 @@ class _UploadPaymentPageState extends State<UploadPaymentPage> {
             content: Text("Upload Failed",
                 style: TextStyle(fontWeight: FontWeight.bold)),
             backgroundColor: Colors.red,
+            duration: Duration(seconds: 2),
           ));
         }
       } else {
@@ -610,6 +617,7 @@ class _UploadPaymentPageState extends State<UploadPaymentPage> {
           content: Text("Upload Failed",
               style: TextStyle(fontWeight: FontWeight.bold)),
           backgroundColor: Colors.red,
+          duration: Duration(seconds: 2),
         ));
       }
     });

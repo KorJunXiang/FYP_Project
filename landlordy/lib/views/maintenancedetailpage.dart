@@ -83,7 +83,7 @@ class _MaintenanceDetailPageState extends State<MaintenanceDetailPage> {
         children: [
           Card(
             margin: const EdgeInsets.all(10),
-            color: Colors.lightBlue.shade100,
+            color: Colors.blue.shade100,
             elevation: 5,
             child: Container(
               padding: const EdgeInsets.fromLTRB(5, 10, 5, 10),
@@ -332,6 +332,7 @@ class _MaintenanceDetailPageState extends State<MaintenanceDetailPage> {
             content: Text("Delete Success",
                 style: TextStyle(fontWeight: FontWeight.bold)),
             backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
           ));
           Navigator.of(context).pop();
         } else {
@@ -339,6 +340,7 @@ class _MaintenanceDetailPageState extends State<MaintenanceDetailPage> {
             content: Text("Delete Failed",
                 style: TextStyle(fontWeight: FontWeight.bold)),
             backgroundColor: Colors.red,
+            duration: Duration(seconds: 2),
           ));
         }
       } else {
@@ -346,6 +348,7 @@ class _MaintenanceDetailPageState extends State<MaintenanceDetailPage> {
           content: Text("Delete Failed",
               style: TextStyle(fontWeight: FontWeight.bold)),
           backgroundColor: Colors.red,
+          duration: Duration(seconds: 2),
         ));
       }
     });

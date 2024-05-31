@@ -9,6 +9,7 @@ import 'package:landlordy/models/maintenance.dart';
 import 'package:landlordy/models/property.dart';
 import 'package:landlordy/models/propertytenant.dart';
 import 'package:landlordy/models/user.dart';
+import 'package:landlordy/shared/loadingindicatorwidget.dart';
 import 'package:landlordy/shared/myserverconfig.dart';
 import 'package:landlordy/shared/navbar.dart';
 import 'package:http/http.dart' as http;
@@ -112,9 +113,7 @@ class _MaintenancePageState extends State<MaintenancePage> {
                             ],
                           ),
                           const SizedBox(height: 100),
-                          const CircularProgressIndicator(
-                            color: Colors.blue,
-                          ),
+                          const LoadingIndicatorWidget(type: 1),
                         ],
                       ),
                     )
@@ -458,14 +457,16 @@ class _MaintenancePageState extends State<MaintenancePage> {
                                               GestureDetector(
                                                 onTap: () async {
                                                   await Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          AddPropertyPage(
-                                                              userdata: widget
-                                                                  .userdata),
-                                                    ),
-                                                  );
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            AddMaintenancePage(
+                                                          userdata:
+                                                              widget.userdata,
+                                                          propertytenant:
+                                                              propertytenant,
+                                                        ),
+                                                      ));
                                                   loadPropertiesAndMaintenances();
                                                 },
                                                 child: Padding(
@@ -618,14 +619,16 @@ class _MaintenancePageState extends State<MaintenancePage> {
                                               GestureDetector(
                                                 onTap: () async {
                                                   await Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          AddPropertyPage(
-                                                              userdata: widget
-                                                                  .userdata),
-                                                    ),
-                                                  );
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            AddMaintenancePage(
+                                                          userdata:
+                                                              widget.userdata,
+                                                          propertytenant:
+                                                              propertytenant,
+                                                        ),
+                                                      ));
                                                   loadPropertiesAndMaintenances();
                                                 },
                                                 child: Padding(
@@ -652,6 +655,8 @@ class _MaintenancePageState extends State<MaintenancePage> {
                                       padding: const EdgeInsets.all(10),
                                       child: Row(
                                         children: [
+                                          const Expanded(
+                                              flex: 1, child: SizedBox()),
                                           Expanded(
                                               flex: 4,
                                               child: Row(
@@ -661,12 +666,14 @@ class _MaintenancePageState extends State<MaintenancePage> {
                                                     scale: 15,
                                                   ),
                                                   const SizedBox(width: 5),
-                                                  const Text(
-                                                    "Reference ID",
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.w900,
-                                                        fontSize: 25),
+                                                  const Flexible(
+                                                    child: Text(
+                                                      "Reference ID",
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w900,
+                                                          fontSize: 25),
+                                                    ),
                                                   ),
                                                 ],
                                               )),
@@ -679,12 +686,14 @@ class _MaintenancePageState extends State<MaintenancePage> {
                                                     scale: 15,
                                                   ),
                                                   const SizedBox(width: 5),
-                                                  const Text(
-                                                    "Cost",
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.w900,
-                                                        fontSize: 25),
+                                                  const Flexible(
+                                                    child: Text(
+                                                      "Cost",
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w900,
+                                                          fontSize: 25),
+                                                    ),
                                                   ),
                                                 ],
                                               )),
@@ -696,6 +705,7 @@ class _MaintenancePageState extends State<MaintenancePage> {
                                       itemCount: maintenanceList.length,
                                       itemBuilder: (context, index) {
                                         return Container(
+                                            height: screenHeight * 0.1,
                                             decoration: BoxDecoration(
                                                 color: Colors.blue.shade100,
                                                 border: const Border(
@@ -707,15 +717,38 @@ class _MaintenancePageState extends State<MaintenancePage> {
                                             child: Row(
                                               children: [
                                                 Expanded(
-                                                    flex: 4,
+                                                  flex: 1,
+                                                  child: CircleAvatar(
+                                                    backgroundColor:
+                                                        Theme.of(context)
+                                                            .colorScheme
+                                                            .primary,
+                                                    foregroundColor:
+                                                        Colors.white,
                                                     child: Text(
-                                                      maintenanceList[index]
-                                                          .referenceId
-                                                          .toString(),
+                                                      "${index + 1}",
                                                       style: const TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 20),
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                    flex: 4,
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 10),
+                                                      child: Text(
+                                                        maintenanceList[index]
+                                                            .referenceId
+                                                            .toString(),
+                                                        style: const TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 20),
+                                                      ),
                                                     )),
                                                 Expanded(
                                                     flex: 2,
@@ -861,8 +894,8 @@ class _MaintenancePageState extends State<MaintenancePage> {
         Uri.parse(
             "${MyServerConfig.server}/landlordy/php/maintenance/load_maintenance.php"),
         body: {
+          "userid": widget.userdata.userid,
           "propertyname": search,
-          "userId": widget.userdata.userid
         }).then((response) {
       log(response.body);
       maintenanceList.clear();
@@ -888,8 +921,8 @@ class _MaintenancePageState extends State<MaintenancePage> {
         Uri.parse(
             "${MyServerConfig.server}/landlordy/php/maintenance/load_maintenance.php"),
         body: {
+          "userid": widget.userdata.userid,
           "referenceID": search,
-          "userId": widget.userdata.userid
         }).then((response) {
       log(response.body);
       maintenanceList.clear();
@@ -911,30 +944,37 @@ class _MaintenancePageState extends State<MaintenancePage> {
     final responseProperties = await http.post(
         Uri.parse(
             "${MyServerConfig.server}/landlordy/php/property/load_property.php"),
-        body: {"userid": widget.userdata.userid});
+        body: {
+          "userid": widget.userdata.userid,
+          "type": "all",
+        });
     final responseMaintenances = await http.post(
         Uri.parse(
             "${MyServerConfig.server}/landlordy/php/maintenance/load_maintenance.php"),
-        body: {"userid": widget.userdata.userid});
+        body: {
+          "userid": widget.userdata.userid,
+        });
     // log(responseProperties.body);
     // log(responseMaintenances.body);
-    if (responseProperties.statusCode == 200 &&
-        responseMaintenances.statusCode == 200) {
+    if (responseProperties.statusCode == 200) {
       var jsondataproperty = jsonDecode(responseProperties.body);
-      var jsondatamaintenance = jsonDecode(responseMaintenances.body);
-      if (jsondataproperty['status'] == "success" &&
-          jsondatamaintenance['status'] == "success") {
+      if (jsondataproperty['status'] == "success") {
         propertyList.clear();
-        maintenanceList.clear();
         jsondataproperty['data']['properties'].forEach((v) {
           propertyList.add(Property.fromJson(v));
           if (v['tenant_id'] != null) {
             propertytenant.add(PropertyTenant.fromJson(v));
           }
         });
-        jsondatamaintenance['data']['maintenances'].forEach((v) {
-          maintenanceList.add(Maintenance.fromJson(v));
-        });
+      }
+      if (responseMaintenances.statusCode == 200) {
+        var jsondatamaintenance = jsonDecode(responseMaintenances.body);
+        if (jsondatamaintenance['status'] == "success") {
+          maintenanceList.clear();
+          jsondatamaintenance['data']['maintenances'].forEach((v) {
+            maintenanceList.add(Maintenance.fromJson(v));
+          });
+        }
       }
       isLoading = false;
       setState(() {});

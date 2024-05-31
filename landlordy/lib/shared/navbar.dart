@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:landlordy/models/user.dart';
+import 'package:landlordy/shared/loadingindicatorwidget.dart';
 import 'package:landlordy/shared/myserverconfig.dart';
 import 'package:landlordy/views/eventspage.dart';
 import 'package:landlordy/views/genreportpage.dart';
@@ -50,13 +51,9 @@ class _NavBarState extends State<NavBar> {
                     if (loadingProgress == null) {
                       return child;
                     } else {
-                      double progress = loadingProgress.cumulativeBytesLoaded /
-                          (loadingProgress.expectedTotalBytes ?? 1);
-                      return Center(
-                          child: CircularProgressIndicator(
-                        value: progress,
-                        color: Colors.blue,
-                      ));
+                      return const Center(
+                        child: LoadingIndicatorWidget(type: 2),
+                      );
                     }
                   },
                   errorBuilder: (context, error, stackTrace) {
@@ -326,6 +323,7 @@ class _NavBarState extends State<NavBar> {
                           content: Text("Logout Success",
                               style: TextStyle(fontWeight: FontWeight.bold)),
                           backgroundColor: Colors.green,
+                          duration: Duration(seconds: 2),
                         ));
                       },
                       style: ElevatedButton.styleFrom(
