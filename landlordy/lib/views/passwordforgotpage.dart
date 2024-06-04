@@ -8,6 +8,7 @@ import 'package:landlordy/views/passwordresetpage.dart';
 import 'package:pinput/pinput.dart';
 import 'package:landlordy/views/signuppage.dart';
 import 'package:http/http.dart' as http;
+import 'package:quickalert/quickalert.dart';
 
 class PasswordForgotPage extends StatefulWidget {
   const PasswordForgotPage({super.key});
@@ -277,15 +278,28 @@ class _PasswordForgotPageState extends State<PasswordForgotPage> {
     final response = await http.post(
         Uri.parse("${MyServerConfig.server}/landlordy/php/user/send_otp.php"),
         body: {"email": email});
-    // log(response.body);
+    log(response.body);
     if (response.statusCode == 200) {
+      emailDialog(email);
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text("OTP Succcessfully Sent\nCheck Your Email",
+        content: Text("OTP Succcessfully Sent",
             style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: Colors.green,
         duration: Duration(seconds: 2),
       ));
     }
+  }
+
+  void emailDialog(String email) {
+    QuickAlert.show(
+      borderRadius: 10,
+      context: context,
+      confirmBtnColor: Theme.of(context).colorScheme.primary,
+      animType: QuickAlertAnimType.slideInUp,
+      title: 'OTP Send Successfully',
+      type: QuickAlertType.success,
+      text: 'An OTP Code Has Been Send To $email',
+    );
   }
 
   Future<void> _navigateReset() async {

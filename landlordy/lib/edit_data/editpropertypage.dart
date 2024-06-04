@@ -65,8 +65,8 @@ class _EditPropertyPageState extends State<EditPropertyPage> {
   bool _isAgeValid = true;
   bool _isPhoneValid = true;
   bool _gotTenant = false;
-  String selectedgender = "";
-  String selectedcategory = "";
+  String? selectedgender;
+  String? selectedcategory;
   var propertytype = ['Landed', 'Highrise', 'Room'];
   var gender = ['Male', 'Female'];
   var category = ['Single', 'Family', 'Commercial'];
@@ -1201,8 +1201,8 @@ class _EditPropertyPageState extends State<EditPropertyPage> {
       selectedgender = widget.tenantdetail.tenantGender.toString();
       selectedcategory = widget.tenantdetail.tenantCategory.toString();
     } else {
-      selectedgender = "Male";
-      selectedcategory = "Single";
+      selectedgender = null;
+      selectedcategory = null;
     }
     setState(() {});
   }

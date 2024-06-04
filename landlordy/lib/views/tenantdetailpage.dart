@@ -456,7 +456,7 @@ class _TenantDetailPageState extends State<TenantDetailPage> {
   void launchWhatsApp(String phone, String name) async {
     String phoneNumber = phone.substring(1);
     String encodedText = Uri.encodeComponent("Hi, $name");
-    Uri url = Uri.parse('https://wa.me/$phoneNumber?text=$encodedText');
+    Uri url = Uri.parse('https://wa.me/60$phoneNumber?text=$encodedText');
     if (!await launchUrl(url)) {
       throw Exception('Could not launch $url');
     }

@@ -483,7 +483,7 @@ class _EditMaintenancePageState extends State<EditMaintenancePage> {
       uniquePropertyNames.add(tenant.propertyName!);
     }
     propertyname = uniquePropertyNames.toList();
-    log("Property names populated: $propertyname");
+    // log("Property names populated: $propertyname");
   }
 
   void updateDialog() {

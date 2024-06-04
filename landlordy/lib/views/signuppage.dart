@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:landlordy/shared/myserverconfig.dart';
 import 'package:landlordy/views/loginpage.dart';
 import 'package:http/http.dart' as http;
+import 'package:quickalert/quickalert.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -591,17 +592,15 @@ class _SignUpPageState extends State<SignUpPage> {
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         if (data['status'] == "success") {
+          emailDialog(email);
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text(
-              "Registration Success\nPlease Check Your Email",
+              "Registration Success",
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             backgroundColor: Colors.green,
             duration: Duration(seconds: 2),
           ));
-          Navigator.of(context).pop();
-          Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (content) => const LoginPage()));
         } else {
           String message = data['message'];
           Navigator.of(context).pop();
@@ -616,5 +615,22 @@ class _SignUpPageState extends State<SignUpPage> {
         }
       }
     });
+  }
+
+  void emailDialog(String email) {
+    QuickAlert.show(
+      borderRadius: 10,
+      context: context,
+      confirmBtnColor: Theme.of(context).colorScheme.primary,
+      animType: QuickAlertAnimType.slideInUp,
+      title: 'Email Send Successfully',
+      type: QuickAlertType.success,
+      text: 'An Activation Email Has Been Send To $email',
+      onConfirmBtnTap: () {
+        Navigator.of(context).pop();
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (content) => const LoginPage()));
+      },
+    );
   }
 }

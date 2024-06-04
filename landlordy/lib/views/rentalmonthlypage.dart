@@ -590,6 +590,7 @@ class _RentalMonthlyPageState extends State<RentalMonthlyPage> {
 
   Future<void> loadYearListAndPaymentsAndImageList(String year) async {
     String originalYear = formatYear(widget.userdata.userdatereg.toString());
+    int originalYearInt = int.parse(originalYear);
     tenantList = List<String>.filled(12, "");
     setState(() {
       isLoading = true;
@@ -641,12 +642,18 @@ class _RentalMonthlyPageState extends State<RentalMonthlyPage> {
         int latestYear = yearIntList
             .reduce((current, next) => current > next ? current : next);
         // log("LATEST YEAR: $latestYear");
-        for (int i = 1; i < 5; i++) {
+        for (int i = 1; i <= 5; i++) {
+          yearList.insert(0, (originalYearInt - i).toString());
+        }
+        for (int i = 1; i <= 5; i++) {
           yearList.add((latestYear + i).toString());
         }
       } else {
         yearList.clear();
         yearList.add(originalYear);
+        for (int i = 2; i > 0; i--) {
+          yearList.insert(0, (originalYearInt - i).toString());
+        }
         // log("ORIGINAL YEAR: $originalYear");
         for (int i = 1; i < 5; i++) {
           yearList.add((int.parse(originalYear) + i).toString());

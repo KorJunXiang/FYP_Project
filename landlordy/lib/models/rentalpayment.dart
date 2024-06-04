@@ -2,6 +2,7 @@ class RentalPayment {
   String? paymentId;
   String? userId;
   String? propertyId;
+  String? propertyName;
   String? tenantId;
   String? tenantName;
   String? paymentAmount;
@@ -14,6 +15,7 @@ class RentalPayment {
       {this.paymentId,
       this.userId,
       this.propertyId,
+      this.propertyName,
       this.tenantId,
       this.tenantName,
       this.paymentAmount,
@@ -26,6 +28,7 @@ class RentalPayment {
     paymentId = json['payment_id'];
     userId = json['user_id'];
     propertyId = json['property_id'];
+    propertyName = json['property_name'];
     tenantId = json['tenant_id'];
     tenantName = json['tenant_name'];
     paymentAmount = json['payment_amount'];
@@ -40,6 +43,7 @@ class RentalPayment {
     data['payment_id'] = paymentId;
     data['user_id'] = userId;
     data['property_id'] = propertyId;
+    data['property_name'] = propertyName;
     data['tenant_id'] = tenantId;
     data['tenant_name'] = tenantName;
     data['payment_amount'] = paymentAmount;

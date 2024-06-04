@@ -78,140 +78,143 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ],
       ),
-      body: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(20),
-              height: screenHeight * 0.3,
-              child: ClipOval(
-                child: Image.network(
-                  "${MyServerConfig.server}/landlordy/assets/profiles/${widget.userdata.userid}.png",
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) {
-                      return child;
-                    } else {
-                      return const Center(
-                        child: LoadingIndicatorWidget(type: 2),
-                      );
-                    }
-                  },
-                  errorBuilder: (context, error, stackTrace) {
-                    return Image.asset('assets/images/user.png');
-                  },
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Center(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(20),
+                height: screenHeight * 0.3,
+                child: ClipOval(
+                  child: Image.network(
+                    "${MyServerConfig.server}/landlordy/assets/profiles/${widget.userdata.userid}.png",
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) {
+                        return child;
+                      } else {
+                        return const Center(
+                          child: LoadingIndicatorWidget(type: 2),
+                        );
+                      }
+                    },
+                    errorBuilder: (context, error, stackTrace) {
+                      return Image.asset('assets/images/user.png');
+                    },
+                  ),
                 ),
               ),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Image.asset(
-                        'assets/icons/name_icon.png',
-                        scale: 8,
-                      ),
-                      Expanded(
-                        child: Container(
-                          height: 80,
-                          margin: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.black, width: 2),
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.blue.shade100,
-                          ),
-                          padding: const EdgeInsets.all(8),
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  widget.userdata.username.toString(),
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 30,
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Image.asset(
+                          'assets/icons/name_icon.png',
+                          scale: 8,
+                        ),
+                        Expanded(
+                          child: Container(
+                            height: 80,
+                            margin: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.black, width: 2),
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.blue.shade100,
+                            ),
+                            padding: const EdgeInsets.all(8),
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    widget.userdata.username.toString(),
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 30,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    children: [
-                      Image.asset(
-                        'assets/icons/email_icon.png',
-                        scale: 8,
-                      ),
-                      Expanded(
-                        child: Container(
-                          height: 80,
-                          margin: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-                          decoration: BoxDecoration(
-                            color: Colors.blue.shade100,
-                            border: Border.all(color: Colors.black, width: 2),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          padding: const EdgeInsets.all(8),
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  widget.userdata.useremail.toString(),
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 30,
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      children: [
+                        Image.asset(
+                          'assets/icons/email_icon.png',
+                          scale: 8,
+                        ),
+                        Expanded(
+                          child: Container(
+                            height: 80,
+                            margin: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                            decoration: BoxDecoration(
+                              color: Colors.blue.shade100,
+                              border: Border.all(color: Colors.black, width: 2),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            padding: const EdgeInsets.all(8),
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    widget.userdata.useremail.toString(),
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 30,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const PasswordForgotPage(),
+                            ));
+                      },
+                      style: ElevatedButton.styleFrom(
+                        fixedSize: const Size.fromHeight(60),
+                        backgroundColor: Colors.blue,
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const PasswordForgotPage(),
-                          ));
-                    },
-                    style: ElevatedButton.styleFrom(
-                      fixedSize: const Size.fromHeight(60),
-                      backgroundColor: Colors.blue,
-                      elevation: 4,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                      icon: Image.asset(
+                        'assets/icons/reset_password_icon.png',
+                        scale: 15,
+                      ),
+                      label: const Text(
+                        'Change Password',
+                        style: TextStyle(
+                          fontSize: 25,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
-                    icon: Image.asset(
-                      'assets/icons/reset_password_icon.png',
-                      scale: 15,
-                    ),
-                    label: const Text(
-                      'Change Password',
-                      style: TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

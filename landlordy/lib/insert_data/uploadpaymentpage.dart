@@ -102,7 +102,7 @@ class _UploadPaymentPageState extends State<UploadPaymentPage> {
                       child: _image != null
                           ? Ink.image(
                               image: FileImage(_image!),
-                              fit: BoxFit.fitHeight,
+                              fit: BoxFit.scaleDown,
                             )
                           : Container(
                               decoration: const BoxDecoration(
@@ -533,6 +533,7 @@ class _UploadPaymentPageState extends State<UploadPaymentPage> {
         body: {
           "userid": widget.userdata.userid.toString(),
           "propertyid": widget.propertydetail.propertyId.toString(),
+          "propertyname": widget.propertydetail.propertyName.toString(),
           "tenantid": widget.tenantdetail.tenantId.toString(),
           "tenantname": widget.tenantdetail.tenantName.toString(),
           "paymentamount": paymentamount,
@@ -541,7 +542,7 @@ class _UploadPaymentPageState extends State<UploadPaymentPage> {
           "year": year,
           "image": image,
         }).then((response) {
-      // print(response.body);
+      print(response.body);
       if (response.statusCode == 200) {
         var jsondata = jsonDecode(response.body);
         if (jsondata['status'] == 'success') {
@@ -584,6 +585,7 @@ class _UploadPaymentPageState extends State<UploadPaymentPage> {
           "userid": widget.userdata.userid.toString(),
           "paymentid": widget.paymentdetail.paymentId.toString(),
           "propertyid": widget.propertydetail.propertyId.toString(),
+          "propertyname": widget.propertydetail.propertyName.toString(),
           "tenantid": widget.tenantdetail.tenantId.toString(),
           "tenantname": widget.tenantdetail.tenantName.toString(),
           "paymentamount": paymentamount,

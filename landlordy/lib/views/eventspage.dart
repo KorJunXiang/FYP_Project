@@ -229,6 +229,7 @@ class _EventsPageState extends State<EventsPage> {
                 ),
                 const SizedBox(height: 10),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Expanded(
                       child: Container(
@@ -256,7 +257,7 @@ class _EventsPageState extends State<EventsPage> {
                         Navigator.of(context).pop();
                       },
                       style: ElevatedButton.styleFrom(
-                        fixedSize: const Size(90, 40),
+                        fixedSize: const Size.fromHeight(40),
                         backgroundColor: Colors.blue,
                         elevation: 4,
                         shape: RoundedRectangleBorder(
