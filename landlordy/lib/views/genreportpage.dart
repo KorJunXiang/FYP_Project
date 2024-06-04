@@ -6,12 +6,13 @@ import 'package:landlordy/models/maintenance.dart';
 import 'package:landlordy/models/property.dart';
 import 'package:landlordy/models/rentalpayment.dart';
 import 'package:landlordy/models/tenant.dart';
+import 'package:landlordy/models/tenantpayment.dart';
 import 'package:landlordy/models/user.dart';
 import 'package:landlordy/shared/loadingindicatorwidget.dart';
 import 'package:landlordy/shared/myserverconfig.dart';
 import 'package:landlordy/shared/navbar.dart';
 import 'package:http/http.dart' as http;
-import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:landlordy/views/genchartpage.dart';
 
 class GenReportPage extends StatefulWidget {
   final User userdata;
@@ -38,19 +39,36 @@ class _GenReportPageState extends State<GenReportPage> {
   final _formKey = GlobalKey<FormState>();
   final int _selectedIndex = 5;
   late double screenWidth, screenHeight;
+  String? data1, data2, data3;
+  String? datatypeValue,
+      propertyValue,
+      tenantValue,
+      paymentValue,
+      maintenanceValue,
+      fromValue,
+      toValue;
   List<Maintenance> maintenanceList = <Maintenance>[];
   List<Property> propertyList = <Property>[];
   List<Tenant> tenantList = <Tenant>[];
   List<RentalPayment> paymentList = <RentalPayment>[];
-  List<PropertyStatus> Properties = [];
+  Map<String, List<TenantPayment>> tenantPaymentMap = {};
+  List<TenantPayment>? tenantPayments = <TenantPayment>[];
+  List<List<TenantPayment>>? tenantPaymentsList = [];
   Set<String> uniquePropertyNames = {"All"};
   Set<String> uniqueTenantNames = {"All"};
   Set<String> uniquePaymentNames = {"All"};
   Set<String> uniqueMaintenanceNames = {"All"};
+  Set<String> uniquePropertyName = {};
+  Set<String> uniqueTenantName = {};
+  Set<String> uniquePaymentName = {};
+  Set<String> uniqueMaintenanceName = {};
+  late List<String> tenantNames = [];
   List<String> propertyname = [];
   List<String> tenantname = [];
   List<String> paymentname = [];
   List<String> maintenancename = [];
+  Set<int> uniqueYears = {};
+  List<String> monthYearList = [];
   List<String> datatype = [
     "Property",
     "Tenant",
@@ -58,6 +76,7 @@ class _GenReportPageState extends State<GenReportPage> {
     "Maintenance",
   ];
   bool isLoading = true;
+  bool isFound = false;
   bool _isDataTypeValid = true;
   bool _isFromValid = true;
   bool _isToValid = true;
@@ -149,6 +168,7 @@ class _GenReportPageState extends State<GenReportPage> {
                               ),
                               const SizedBox(height: 4),
                               DropdownButtonFormField2<String>(
+                                value: datatypeValue,
                                 style: TextStyle(
                                   fontSize: 17,
                                   color: _isDataTypeValid
@@ -207,7 +227,9 @@ class _GenReportPageState extends State<GenReportPage> {
                                 },
                                 onChanged: (newValue) async {
                                   await visible(newValue!);
-                                  setState(() {});
+                                  setState(() {
+                                    datatypeValue = newValue;
+                                  });
                                 },
                               ),
                               const SizedBox(height: 10),
@@ -225,6 +247,7 @@ class _GenReportPageState extends State<GenReportPage> {
                                       ),
                                       const SizedBox(height: 4),
                                       DropdownButtonFormField2<String>(
+                                        value: propertyValue,
                                         style: TextStyle(
                                           fontSize: 17,
                                           color: _isPropertyValid
@@ -309,6 +332,7 @@ class _GenReportPageState extends State<GenReportPage> {
                                       ),
                                       const SizedBox(height: 4),
                                       DropdownButtonFormField2<String>(
+                                        value: tenantValue,
                                         style: TextStyle(
                                           fontSize: 17,
                                           color: _isTenantValid
@@ -393,6 +417,7 @@ class _GenReportPageState extends State<GenReportPage> {
                                       ),
                                       const SizedBox(height: 4),
                                       DropdownButtonFormField2<String>(
+                                        value: paymentValue,
                                         style: TextStyle(
                                           fontSize: 17,
                                           color: _isPaymentValid
@@ -477,6 +502,7 @@ class _GenReportPageState extends State<GenReportPage> {
                                       ),
                                       const SizedBox(height: 4),
                                       DropdownButtonFormField2<String>(
+                                        value: maintenanceValue,
                                         style: TextStyle(
                                           fontSize: 17,
                                           color: _isMaintenanceValid
@@ -566,6 +592,7 @@ class _GenReportPageState extends State<GenReportPage> {
                                           ),
                                           const SizedBox(height: 4),
                                           DropdownButtonFormField2<String>(
+                                            value: fromValue,
                                             style: TextStyle(
                                               fontSize: 17,
                                               color: _isFromValid
@@ -612,7 +639,7 @@ class _GenReportPageState extends State<GenReportPage> {
                                                     BorderRadius.circular(10),
                                               ),
                                             ),
-                                            items: propertyname
+                                            items: monthYearList
                                                 .map((String items) {
                                               return DropdownMenuItem<String>(
                                                 value: items,
@@ -657,6 +684,7 @@ class _GenReportPageState extends State<GenReportPage> {
                                           ),
                                           const SizedBox(height: 4),
                                           DropdownButtonFormField2<String>(
+                                            value: toValue,
                                             style: TextStyle(
                                               fontSize: 17,
                                               color: _isToValid
@@ -703,7 +731,7 @@ class _GenReportPageState extends State<GenReportPage> {
                                                     BorderRadius.circular(10),
                                               ),
                                             ),
-                                            items: propertyname
+                                            items: monthYearList
                                                 .map((String items) {
                                               return DropdownMenuItem<String>(
                                                 value: items,
@@ -742,7 +770,6 @@ class _GenReportPageState extends State<GenReportPage> {
                                 children: [
                                   ElevatedButton(
                                     onPressed: () {
-                                      late String data1, data2, data3;
                                       if (_isPropertyVisible) {
                                         data1 = _propertyEditingController.text;
                                         data2 = "";
@@ -775,7 +802,7 @@ class _GenReportPageState extends State<GenReportPage> {
                                         ));
                                         return;
                                       }
-                                      findData(data1, data2, data3);
+                                      findData(data1!, data2!, data3!);
                                     },
                                     style: ElevatedButton.styleFrom(
                                       fixedSize: Size(screenWidth * 0.35, 45),
@@ -796,28 +823,217 @@ class _GenReportPageState extends State<GenReportPage> {
                                   ),
                                 ],
                               ),
+                              const SizedBox(height: 4),
                               Visibility(
-                                visible: _isPropertyVisible,
-                                child: SfCircularChart(
-                                  legend: const Legend(
-                                    isVisible: true,
-                                    overflowMode: LegendItemOverflowMode.wrap,
-                                  ),
-                                  series: <CircularSeries>[
-                                    DoughnutSeries<PropertyStatus, String>(
-                                      dataSource: Properties,
-                                      xValueMapper: (PropertyStatus data, _) =>
-                                          data.propertyName,
-                                      yValueMapper: (PropertyStatus data, _) =>
-                                          data.quantity,
-                                      dataLabelSettings:
-                                          const DataLabelSettings(
-                                        isVisible: true,
+                                visible: isFound,
+                                child: (_isPaymentVisible &&
+                                        tenantPaymentsList != null)
+                                    ? Column(
+                                        children: [
+                                          Container(
+                                            height: screenHeight * 0.45,
+                                            decoration: BoxDecoration(
+                                              color: Colors.blue.shade200,
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              border: Border.all(
+                                                color: Colors.black,
+                                                width: 2,
+                                              ),
+                                            ),
+                                            padding: const EdgeInsets.all(8),
+                                            child: SingleChildScrollView(
+                                              child: Column(
+                                                children: [
+                                                  ListView.separated(
+                                                    shrinkWrap: true,
+                                                    physics:
+                                                        const NeverScrollableScrollPhysics(),
+                                                    itemCount:
+                                                        tenantPaymentsList!
+                                                            .length,
+                                                    separatorBuilder:
+                                                        (context, index) =>
+                                                            const Divider(
+                                                      color: Colors.black,
+                                                      thickness: 2,
+                                                    ),
+                                                    itemBuilder:
+                                                        (context, outerIndex) {
+                                                      return Column(
+                                                        children: [
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              Card(
+                                                                shape: RoundedRectangleBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            10)),
+                                                                child: Padding(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .all(
+                                                                          8.0),
+                                                                  child:
+                                                                      Text.rich(
+                                                                    TextSpan(
+                                                                      text:
+                                                                          'Tenant Name: ',
+                                                                      style: const TextStyle(
+                                                                          fontSize:
+                                                                              25),
+                                                                      children: <TextSpan>[
+                                                                        TextSpan(
+                                                                          text:
+                                                                              tenantNames[outerIndex],
+                                                                          style:
+                                                                              const TextStyle(fontWeight: FontWeight.bold),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              )
+                                                            ],
+                                                          ),
+                                                          ListView.separated(
+                                                            shrinkWrap: true,
+                                                            physics:
+                                                                const NeverScrollableScrollPhysics(),
+                                                            separatorBuilder:
+                                                                (context,
+                                                                        index) =>
+                                                                    const Divider(
+                                                              thickness: 2,
+                                                              color:
+                                                                  Colors.grey,
+                                                            ),
+                                                            itemCount:
+                                                                tenantPaymentsList![
+                                                                        outerIndex]
+                                                                    .length,
+                                                            itemBuilder:
+                                                                (context,
+                                                                    innerIndex) {
+                                                              final payment =
+                                                                  tenantPaymentsList![
+                                                                          outerIndex]
+                                                                      [
+                                                                      innerIndex];
+                                                              return Container(
+                                                                margin: const EdgeInsets
+                                                                    .symmetric(
+                                                                    vertical: 8,
+                                                                    horizontal:
+                                                                        10),
+                                                                child: Row(
+                                                                  children: [
+                                                                    Expanded(
+                                                                      flex: 6,
+                                                                      child:
+                                                                          Text(
+                                                                        payment.monthYear ??
+                                                                            '',
+                                                                        style:
+                                                                            const TextStyle(
+                                                                          fontSize:
+                                                                              22,
+                                                                          fontWeight:
+                                                                              FontWeight.bold,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    Expanded(
+                                                                      flex: 4,
+                                                                      child:
+                                                                          Text(
+                                                                        payment.paymentAmount?.toString() ??
+                                                                            '',
+                                                                        style:
+                                                                            const TextStyle(
+                                                                          fontSize:
+                                                                              22,
+                                                                          fontWeight:
+                                                                              FontWeight.bold,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              );
+                                                            },
+                                                          ),
+                                                        ],
+                                                      );
+                                                    },
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          ElevatedButton(
+                                            onPressed: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (content) =>
+                                                      GenChartPage(
+                                                    tenantPaymentsList:
+                                                        tenantPaymentsList!,
+                                                    datatype: datatypeValue,
+                                                    tenantNames: tenantNames,
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              fixedSize:
+                                                  Size(screenWidth * 0.35, 45),
+                                              backgroundColor: Colors.green,
+                                              elevation: 4,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+                                            ),
+                                            child: const Text(
+                                              'Generate',
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                        ],
+                                      )
+                                    : Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.blue.shade200,
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          border: Border.all(
+                                            color: Colors.black,
+                                            width: 2,
+                                          ),
+                                        ),
+                                        padding: const EdgeInsets.all(8),
+                                        child: const Center(
+                                          child: Text(
+                                            "No Payments Found",
+                                            style: TextStyle(
+                                              fontSize: 25,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              )
+                              ),
                             ],
                           ),
                         ],
@@ -828,6 +1044,10 @@ class _GenReportPageState extends State<GenReportPage> {
         ),
       ),
     );
+  }
+
+  String formatYear(String date) {
+    return date.substring(0, 4);
   }
 
   Future<void> visible(String value) async {
@@ -861,15 +1081,19 @@ class _GenReportPageState extends State<GenReportPage> {
     maintenancename.clear();
     for (Property property in propertyList) {
       uniquePropertyNames.add(property.propertyName!);
+      uniquePropertyName.add(property.propertyName!);
     }
     for (Tenant tenant in tenantList) {
       uniqueTenantNames.add(tenant.tenantName!);
+      uniqueTenantName.add(tenant.tenantName!);
     }
     for (RentalPayment payment in paymentList) {
       uniquePaymentNames.add(payment.tenantName!);
+      uniquePaymentName.add(payment.tenantName!);
     }
     for (Maintenance maintenance in maintenanceList) {
       uniqueMaintenanceNames.add(maintenance.propertyName!);
+      uniqueMaintenanceName.add(maintenance.propertyName!);
     }
     propertyname = uniquePropertyNames.toList();
     tenantname = uniqueTenantNames.toList();
@@ -878,7 +1102,36 @@ class _GenReportPageState extends State<GenReportPage> {
     // log("Property names populated: $propertyname");
   }
 
+  List<String> generateMonthYearList(String currentYear, int latestYear) {
+    final months = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December'
+    ];
+    final finalYear = latestYear;
+    final startYear = int.parse(currentYear) - 5;
+    List<String> monthYearList = [];
+
+    for (int year = startYear; year <= finalYear + 5; year++) {
+      for (String month in months) {
+        monthYearList.add('$month $year');
+      }
+    }
+
+    return monthYearList;
+  }
+
   Future<void> loadDataList() async {
+    String originalYear = formatYear(widget.userdata.userdatereg.toString());
     final responseProperties = await http.post(
         Uri.parse(
             "${MyServerConfig.server}/landlordy/php/property/load_property.php"),
@@ -908,6 +1161,7 @@ class _GenReportPageState extends State<GenReportPage> {
     // log(responseTenants.body);
     // log(responseMaintenances.body);
     // log(responsePayments.body);
+
     if (responseProperties.statusCode == 200) {
       var jsondataproperty = jsonDecode(responseProperties.body);
       if (jsondataproperty['status'] == "success") {
@@ -941,34 +1195,133 @@ class _GenReportPageState extends State<GenReportPage> {
         paymentList.clear();
         jsondatapayment['data']['payments'].forEach((v) {
           paymentList.add(RentalPayment.fromJson(v));
+          int paymentYear = int.parse(v['year']);
+          uniqueYears.add(paymentYear);
         });
       }
     }
+    int latestYear =
+        uniqueYears.reduce((current, next) => current > next ? current : next);
+    monthYearList = generateMonthYearList(originalYear, latestYear);
+    // for (int i = 0; i < monthYearList.length; i++) {
+    //   log(monthYearList[i]);
+    // }
     populateNameLists();
     isLoading = false;
     setState(() {});
   }
 
   void findData(String data1, String data2, String data3) async {
-    log(data1);
-    log(data2);
-    log(data3);
-    if (_isPropertyVisible) {
-      for (var property in propertyList) {
-        PropertyStatus propertyStatus = PropertyStatus(
-          propertyName: property.propertyName,
-          quantity: 1,
-        );
-        Properties.add(propertyStatus);
+    log("Data1: $data1 Data2: $data2 Data3: $data3");
+
+    final Map<String, int> monthMap = {
+      'January': 1,
+      'February': 2,
+      'March': 3,
+      'April': 4,
+      'May': 5,
+      'June': 6,
+      'July': 7,
+      'August': 8,
+      'September': 9,
+      'October': 10,
+      'November': 11,
+      'December': 12
+    };
+
+    DateTime parseMonthYear(String monthYear) {
+      final parts = monthYear.split(' ');
+      final month = parts[0];
+      final year = int.parse(parts[1]);
+
+      return DateTime(year, monthMap[month]!);
+    }
+
+    String formatMonthYear(DateTime date) {
+      final monthNames = monthMap.keys.toList();
+      final month = monthNames[date.month - 1];
+      final year = date.year.toString();
+      return "$month $year";
+    }
+
+    final startDate = parseMonthYear(data2);
+    final endDate = parseMonthYear(data3);
+
+    log('Parsed Start Date: $startDate');
+    log('Parsed End Date: $endDate');
+
+    if (_isPaymentVisible) {
+      tenantNames = (data1 == "All") ? uniquePaymentName.toList() : [data1];
+
+      // Create default entries for each month in the range for each tenant
+      for (var tenantName in tenantNames) {
+        DateTime currentDate = startDate;
+        tenantPaymentMap[tenantName] = [];
+
+        while (!currentDate.isAfter(endDate)) {
+          tenantPaymentMap[tenantName]!.add(TenantPayment(
+            tenantName: tenantName,
+            monthYear: formatMonthYear(currentDate),
+            paymentAmount: (0.00).toString(),
+          ));
+          currentDate = DateTime(currentDate.year, currentDate.month + 1);
+        }
       }
-    } else {}
-    for (var property in Properties) {
-      print(
-          'Property Name: ${property.propertyName}, Quantity: ${property.quantity}');
+
+      // Update entries with actual payments if found
+      for (var v in paymentList) {
+        final paymentDate = DateTime(int.parse(v.year!), monthMap[v.month]!);
+
+        if ((paymentDate.isAfter(startDate) ||
+                paymentDate.isAtSameMomentAs(startDate)) &&
+            (paymentDate.isBefore(endDate) ||
+                paymentDate.isAtSameMomentAs(endDate))) {
+          String? tenantName = v.tenantName;
+          if (tenantPaymentMap.containsKey(tenantName)) {
+            // Find the index of the existing default entry to update
+            int index = tenantPaymentMap[tenantName]!.indexWhere((entry) =>
+                entry.monthYear == "${v.month} ${v.year}" &&
+                entry.tenantName == tenantName);
+            if (index != -1) {
+              tenantPaymentMap[tenantName]![index] = TenantPayment(
+                tenantName: v.tenantName,
+                monthYear: "${v.month} ${v.year}",
+                paymentAmount: v.paymentAmount,
+              );
+            }
+          }
+        }
+      }
+      if (data1 == "All") {
+        tenantPayments = [];
+        tenantPaymentsList = [];
+        tenantPaymentMap.forEach((key, value) {
+          tenantPayments?.addAll(value);
+        });
+        tenantPaymentMap.forEach((key, value) {
+          tenantPaymentsList?.add(value);
+        });
+      } else {
+        tenantPayments = tenantPaymentMap[data1];
+        tenantPaymentsList = [tenantPaymentMap[data1]!];
+      }
+      setState(() {
+        isFound = true;
+      });
+      // Print each tenant's payment list
+      tenantPaymentMap.forEach((tenantName, payments) {
+        log("Tenant: $tenantName");
+        for (var tenantPayment in payments) {
+          log(tenantPayment.toString());
+        }
+      });
     }
   }
 
   Future<void> _refresh() async {
+    setState(() {
+      isLoading = true;
+    });
     return Future.delayed(
       const Duration(seconds: 3),
       () {
@@ -977,27 +1330,12 @@ class _GenReportPageState extends State<GenReportPage> {
         tenantname.clear();
         paymentname.clear();
         maintenancename.clear();
-        setState(() {});
+        _isPropertyVisible = _isTenantVisible =
+            _isPaymentVisible = _isMaintenanceVisible = isFound = false;
+        setState(() {
+          isLoading = false;
+        });
       },
     );
-  }
-}
-
-class PropertyStatus {
-  String? propertyName;
-  int? quantity;
-
-  PropertyStatus({this.propertyName, this.quantity});
-
-  PropertyStatus.fromJson(Map<String, dynamic> json) {
-    propertyName = json['property_name'];
-    quantity = 1; // Set the quantity to 1 for each property
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'property_name': propertyName,
-      'quantity': quantity,
-    };
   }
 }
