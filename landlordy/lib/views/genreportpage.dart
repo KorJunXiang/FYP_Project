@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:landlordy/models/maintenance.dart';
 import 'package:landlordy/models/property.dart';
@@ -843,6 +844,7 @@ class _GenReportPageState extends State<GenReportPage> {
                                             ),
                                             padding: const EdgeInsets.all(8),
                                             child: SingleChildScrollView(
+                                              scrollDirection: Axis.vertical,
                                               child: Column(
                                                 children: [
                                                   ListView.separated(
@@ -1247,8 +1249,8 @@ class _GenReportPageState extends State<GenReportPage> {
     final startDate = parseMonthYear(data2);
     final endDate = parseMonthYear(data3);
 
-    log('Parsed Start Date: $startDate');
-    log('Parsed End Date: $endDate');
+    // log('Parsed Start Date: $startDate');
+    // log('Parsed End Date: $endDate');
 
     if (_isPaymentVisible) {
       tenantNames = (data1 == "All") ? uniquePaymentName.toList() : [data1];
@@ -1262,7 +1264,7 @@ class _GenReportPageState extends State<GenReportPage> {
           tenantPaymentMap[tenantName]!.add(TenantPayment(
             tenantName: tenantName,
             monthYear: formatMonthYear(currentDate),
-            paymentAmount: (0.00).toString(),
+            paymentAmount: "RM 0",
           ));
           currentDate = DateTime(currentDate.year, currentDate.month + 1);
         }
@@ -1286,7 +1288,7 @@ class _GenReportPageState extends State<GenReportPage> {
               tenantPaymentMap[tenantName]![index] = TenantPayment(
                 tenantName: v.tenantName,
                 monthYear: "${v.month} ${v.year}",
-                paymentAmount: v.paymentAmount,
+                paymentAmount: "RM ${v.paymentAmount}",
               );
             }
           }
@@ -1309,12 +1311,12 @@ class _GenReportPageState extends State<GenReportPage> {
         isFound = true;
       });
       // Print each tenant's payment list
-      tenantPaymentMap.forEach((tenantName, payments) {
-        log("Tenant: $tenantName");
-        for (var tenantPayment in payments) {
-          log(tenantPayment.toString());
-        }
-      });
+      // tenantPaymentMap.forEach((tenantName, payments) {
+      //   log("Tenant: $tenantName");
+      //   for (var tenantPayment in payments) {
+      //     log(tenantPayment.toString());
+      //   }
+      // });
     }
   }
 
@@ -1325,6 +1327,7 @@ class _GenReportPageState extends State<GenReportPage> {
     return Future.delayed(
       const Duration(seconds: 3),
       () {
+        datatypeValue = null;
         loadDataList();
         propertyname.clear();
         tenantname.clear();

@@ -320,85 +320,94 @@ class _TenantsPageState extends State<TenantsPage> {
                         ),
                       ),
                       Expanded(
-                          child: ListView.builder(
-                        itemCount: tenantList.length,
-                        itemBuilder: (context, index) {
-                          return Container(
-                              height: screenHeight * 0.1,
-                              decoration: BoxDecoration(
-                                  color: Colors.blue.shade100,
-                                  border: const Border(
-                                      bottom: BorderSide(
-                                          color: Colors.black, width: 2))),
-                              padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    flex: 1,
-                                    child: CircleAvatar(
-                                      backgroundColor:
-                                          Theme.of(context).colorScheme.primary,
-                                      foregroundColor: Colors.white,
-                                      child: Text(
-                                        "${index + 1}",
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
+                          child: CupertinoScrollbar(
+                        radius: const Radius.circular(10),
+                        thickness: 8,
+                        child: ListView.builder(
+                          itemCount: tenantList.length,
+                          itemBuilder: (context, index) {
+                            return Container(
+                                height: screenHeight * 0.1,
+                                decoration: BoxDecoration(
+                                    color: Colors.blue.shade100,
+                                    border: const Border(
+                                        bottom: BorderSide(
+                                            color: Colors.black, width: 2))),
+                                padding:
+                                    const EdgeInsets.fromLTRB(10, 5, 10, 5),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      flex: 1,
+                                      child: CircleAvatar(
+                                        backgroundColor: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                        foregroundColor: Colors.white,
+                                        child: Text(
+                                          "${index + 1}",
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  Expanded(
-                                      flex: 4,
-                                      child: Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 10),
+                                    Expanded(
+                                        flex: 4,
+                                        child: Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 10),
+                                          child: Text(
+                                            tenantList[index]
+                                                .tenantName
+                                                .toString(),
+                                            style:
+                                                const TextStyle(fontSize: 20),
+                                          ),
+                                        )),
+                                    Expanded(
+                                        flex: 3,
                                         child: Text(
                                           tenantList[index]
-                                              .tenantName
+                                              .tenantGender
                                               .toString(),
                                           style: const TextStyle(fontSize: 20),
-                                        ),
-                                      )),
-                                  Expanded(
-                                      flex: 3,
-                                      child: Text(
-                                        tenantList[index]
-                                            .tenantGender
-                                            .toString(),
-                                        style: const TextStyle(fontSize: 20),
-                                      )),
-                                  Expanded(
-                                      flex: 1,
-                                      child: Text(
-                                        textAlign: TextAlign.center,
-                                        tenantList[index].tenantAge.toString(),
-                                        style: const TextStyle(fontSize: 20),
-                                      )),
-                                  Expanded(
-                                      flex: 1,
-                                      child: GestureDetector(
-                                          onTap: () async {
-                                            Tenant singleTenant =
-                                                tenantList[index];
-                                            await Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    TenantDetailPage(
-                                                  userdata: widget.userdata,
-                                                  tenantdetail: singleTenant,
+                                        )),
+                                    Expanded(
+                                        flex: 1,
+                                        child: Text(
+                                          textAlign: TextAlign.center,
+                                          tenantList[index]
+                                              .tenantAge
+                                              .toString(),
+                                          style: const TextStyle(fontSize: 20),
+                                        )),
+                                    Expanded(
+                                        flex: 1,
+                                        child: GestureDetector(
+                                            onTap: () async {
+                                              Tenant singleTenant =
+                                                  tenantList[index];
+                                              await Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      TenantDetailPage(
+                                                    userdata: widget.userdata,
+                                                    tenantdetail: singleTenant,
+                                                  ),
                                                 ),
-                                              ),
-                                            );
-                                            loadTenants();
-                                          },
-                                          child: Image.asset(
-                                            'assets/icons/next_icon.png',
-                                            scale: 18,
-                                          ))),
-                                ],
-                              ));
-                        },
+                                              );
+                                              loadTenants();
+                                            },
+                                            child: Image.asset(
+                                              'assets/icons/next_icon.png',
+                                              scale: 18,
+                                            ))),
+                                  ],
+                                ));
+                          },
+                        ),
                       )),
                     ],
                   ),

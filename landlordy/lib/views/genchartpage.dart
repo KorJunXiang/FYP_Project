@@ -19,32 +19,40 @@ class GenChartPage extends StatefulWidget {
 class _GenChartPageState extends State<GenChartPage> {
   late double screenWidth, screenHeight;
   late TooltipBehavior _tooltipBehavior;
-  List<LineSeries<TenantPayment, String>> lineSeriesList = [];
+  late TrackballBehavior _trackballBehavior;
+  late ZoomPanBehavior _zoomPanBehavior;
+  List<BarSeries<TenantPayment, String>> lineSeriesList = [];
 
   @override
   void initState() {
     _getData();
-    _loadSeries();
-    _tooltipBehavior = TooltipBehavior(enable: true);
+    _tooltipBehavior = TooltipBehavior(enable: true, canShowMarker: false);
+    _trackballBehavior = TrackballBehavior(
+        enable: true, tooltipDisplayMode: TrackballDisplayMode.groupAllPoints);
+    _zoomPanBehavior =
+        ZoomPanBehavior(enablePanning: true, enablePinching: true);
     super.initState();
   }
 
   void _getData() {
     for (int i = 0; i < widget.tenantPaymentsList!.length; i++) {
-      var lineSeries = LineSeries<TenantPayment, String>(
+      var lineSeries = BarSeries<TenantPayment, String>(
         dataSource: widget.tenantPaymentsList![i],
         name: widget.tenantNames![i],
         xValueMapper: (TenantPayment payment, _) => payment.monthYear,
         yValueMapper: (TenantPayment payment, _) =>
-            double.parse(payment.paymentAmount!),
-        dataLabelSettings: const DataLabelSettings(isVisible: true),
-        markerSettings: const MarkerSettings(isVisible: true),
+            payment.paymentAmount == "RM 0"
+                ? null
+                : double.parse(payment.paymentAmount!.substring(3)),
+        dataLabelSettings: const DataLabelSettings(
+            isVisible: true, textStyle: TextStyle(fontSize: 8)),
+        markerSettings: const MarkerSettings(
+            isVisible: true, shape: DataMarkerType.horizontalLine),
+        emptyPointSettings: const EmptyPointSettings(mode: EmptyPointMode.zero),
       );
       lineSeriesList.add(lineSeries);
     }
   }
-
-  void _loadSeries() {}
 
   @override
   Widget build(BuildContext context) {
@@ -80,25 +88,31 @@ class _GenChartPageState extends State<GenChartPage> {
             border: Border.all(width: 2)),
         width: screenWidth,
         height: screenHeight,
-        child: Expanded(
-          child: SfCartesianChart(
-            zoomPanBehavior:
-                ZoomPanBehavior(enablePanning: true, enablePinching: true),
-            trackballBehavior: TrackballBehavior(enable: true),
-            title: const ChartTitle(
-                text: "Rental Payments",
-                textStyle: TextStyle(fontWeight: FontWeight.bold)),
-            legend: const Legend(isVisible: true),
-            tooltipBehavior: _tooltipBehavior,
-            primaryXAxis: const CategoryAxis(
-              title: AxisTitle(text: 'Month Year'),
+        child: SfCartesianChart(
+          title: const ChartTitle(
+              text: "Rental Payments",
+              textStyle: TextStyle(fontWeight: FontWeight.bold)),
+          primaryXAxis: const CategoryAxis(
+              title: AxisTitle(
+            text: 'Month Year',
+            textStyle: TextStyle(fontWeight: FontWeight.bold),
+          )),
+          primaryYAxis: const NumericAxis(
+            labelFormat: 'RM{value}',
+            title: AxisTitle(
+              text: 'Payment Amount',
+              textStyle: TextStyle(fontWeight: FontWeight.bold),
             ),
-            primaryYAxis: const NumericAxis(
-              labelFormat: '{value}',
-              title: AxisTitle(text: 'Payment Amount'),
-            ),
-            series: lineSeriesList,
           ),
+          legend: const Legend(
+              isVisible: true,
+              borderColor: Colors.black,
+              backgroundColor: Colors.white,
+              shouldAlwaysShowScrollbar: false),
+          tooltipBehavior: _tooltipBehavior,
+          zoomPanBehavior: _zoomPanBehavior,
+          trackballBehavior: _trackballBehavior,
+          series: lineSeriesList,
         ),
       ),
     );

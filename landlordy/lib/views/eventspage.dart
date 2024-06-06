@@ -126,56 +126,61 @@ class _EventsPageState extends State<EventsPage> {
                   : Column(
                       children: [
                         Expanded(
-                            child: ListView.builder(
-                          padding: const EdgeInsets.all(10),
-                          itemCount: eventList.length,
-                          itemBuilder: (context, index) {
-                            return SizedBox(
-                              height: screenHeight * 0.1,
-                              child: Card(
-                                color: Colors.blue.shade100,
-                                child: ListTile(
-                                  onTap: () {
-                                    showEvent(eventList[index]);
-                                  },
-                                  leading: CircleAvatar(
-                                    backgroundColor:
-                                        Theme.of(context).colorScheme.primary,
-                                    foregroundColor: Colors.white,
-                                    child: Text(
-                                      "${index + 1}",
+                            child: CupertinoScrollbar(
+                          radius: const Radius.circular(10),
+                          thickness: 8,
+                          child: ListView.builder(
+                            padding: const EdgeInsets.all(10),
+                            itemCount: eventList.length,
+                            itemBuilder: (context, index) {
+                              return SizedBox(
+                                height: screenHeight * 0.1,
+                                child: Card(
+                                  color: Colors.blue.shade100,
+                                  child: ListTile(
+                                    onTap: () {
+                                      showEvent(eventList[index]);
+                                    },
+                                    leading: CircleAvatar(
+                                      backgroundColor:
+                                          Theme.of(context).colorScheme.primary,
+                                      foregroundColor: Colors.white,
+                                      child: Text(
+                                        "${index + 1}",
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                    title: Text(
+                                      eventList[index].title.toString(),
+                                      maxLines: 1,
                                       style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                  ),
-                                  title: Text(
-                                    eventList[index].title.toString(),
-                                    maxLines: 1,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
+                                    subtitle: Text(
+                                      eventList[index].description.toString(),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                      ),
                                     ),
-                                  ),
-                                  subtitle: Text(
-                                    eventList[index].description.toString(),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                  trailing: Text(
-                                    formatDate(
-                                        eventList[index].eventDate.toString()),
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14,
+                                    trailing: Text(
+                                      formatDate(eventList[index]
+                                          .eventDate
+                                          .toString()),
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            );
-                          },
+                              );
+                            },
+                          ),
                         )),
                       ],
                     ),

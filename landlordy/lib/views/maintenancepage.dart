@@ -701,95 +701,103 @@ class _MaintenancePageState extends State<MaintenancePage> {
                                       ),
                                     ),
                                     Expanded(
-                                        child: ListView.builder(
-                                      itemCount: maintenanceList.length,
-                                      itemBuilder: (context, index) {
-                                        return Container(
-                                            height: screenHeight * 0.1,
-                                            decoration: BoxDecoration(
-                                                color: Colors.blue.shade100,
-                                                border: const Border(
-                                                    bottom: BorderSide(
-                                                        color: Colors.black,
-                                                        width: 2))),
-                                            padding: const EdgeInsets.fromLTRB(
-                                                10, 5, 10, 5),
-                                            child: Row(
-                                              children: [
-                                                Expanded(
-                                                  flex: 1,
-                                                  child: CircleAvatar(
-                                                    backgroundColor:
-                                                        Theme.of(context)
-                                                            .colorScheme
-                                                            .primary,
-                                                    foregroundColor:
-                                                        Colors.white,
-                                                    child: Text(
-                                                      "${index + 1}",
-                                                      style: const TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
+                                        child: CupertinoScrollbar(
+                                      radius: const Radius.circular(10),
+                                      thickness: 8,
+                                      child: ListView.builder(
+                                        itemCount: maintenanceList.length,
+                                        itemBuilder: (context, index) {
+                                          return Container(
+                                              height: screenHeight * 0.1,
+                                              decoration: BoxDecoration(
+                                                  color: Colors.blue.shade100,
+                                                  border: const Border(
+                                                      bottom: BorderSide(
+                                                          color: Colors.black,
+                                                          width: 2))),
+                                              padding:
+                                                  const EdgeInsets.fromLTRB(
+                                                      10, 5, 10, 5),
+                                              child: Row(
+                                                children: [
+                                                  Expanded(
+                                                    flex: 1,
+                                                    child: CircleAvatar(
+                                                      backgroundColor:
+                                                          Theme.of(context)
+                                                              .colorScheme
+                                                              .primary,
+                                                      foregroundColor:
+                                                          Colors.white,
+                                                      child: Text(
+                                                        "${index + 1}",
+                                                        style: const TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
-                                                ),
-                                                Expanded(
-                                                    flex: 4,
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              left: 10),
+                                                  Expanded(
+                                                      flex: 4,
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(left: 10),
+                                                        child: Text(
+                                                          maintenanceList[index]
+                                                              .referenceId
+                                                              .toString(),
+                                                          style:
+                                                              const TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize: 20),
+                                                        ),
+                                                      )),
+                                                  Expanded(
+                                                      flex: 2,
                                                       child: Text(
-                                                        maintenanceList[index]
-                                                            .referenceId
-                                                            .toString(),
+                                                        "RM ${maintenanceList[index].maintenanceCost}",
                                                         style: const TextStyle(
                                                             fontWeight:
                                                                 FontWeight.bold,
                                                             fontSize: 20),
-                                                      ),
-                                                    )),
-                                                Expanded(
-                                                    flex: 2,
-                                                    child: Text(
-                                                      "RM ${maintenanceList[index].maintenanceCost}",
-                                                      style: const TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 20),
-                                                    )),
-                                                Expanded(
-                                                    flex: 1,
-                                                    child: GestureDetector(
-                                                        onTap: () async {
-                                                          Maintenance
-                                                              singleMaintenance =
-                                                              maintenanceList[
-                                                                  index];
-                                                          await Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
-                                                                        MaintenanceDetailPage(
-                                                                          userdata:
-                                                                              widget.userdata,
-                                                                          maintenancedetail:
-                                                                              singleMaintenance,
-                                                                          propertytenant:
-                                                                              propertytenant,
-                                                                        )),
-                                                          );
-                                                          loadPropertiesAndMaintenances();
-                                                        },
-                                                        child: Image.asset(
-                                                          'assets/icons/next_icon.png',
-                                                          scale: 18,
-                                                        ))),
-                                              ],
-                                            ));
-                                      },
+                                                      )),
+                                                  Expanded(
+                                                      flex: 1,
+                                                      child: GestureDetector(
+                                                          onTap: () async {
+                                                            Maintenance
+                                                                singleMaintenance =
+                                                                maintenanceList[
+                                                                    index];
+                                                            await Navigator
+                                                                .push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                  builder:
+                                                                      (context) =>
+                                                                          MaintenanceDetailPage(
+                                                                            userdata:
+                                                                                widget.userdata,
+                                                                            maintenancedetail:
+                                                                                singleMaintenance,
+                                                                            propertytenant:
+                                                                                propertytenant,
+                                                                          )),
+                                                            );
+                                                            loadPropertiesAndMaintenances();
+                                                          },
+                                                          child: Image.asset(
+                                                            'assets/icons/next_icon.png',
+                                                            scale: 18,
+                                                          ))),
+                                                ],
+                                              ));
+                                        },
+                                      ),
                                     )),
                                   ],
                                 )),
