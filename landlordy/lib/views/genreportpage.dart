@@ -1877,16 +1877,15 @@ class _GenReportPageState extends State<GenReportPage> {
       'November',
       'December'
     ];
-    final finalYear = latestYear;
-    final startYear = int.parse(currentYear) - 5;
+
+    int year = int.parse(currentYear);
     List<String> monthYearList = [];
 
-    for (int year = startYear; year <= finalYear + 5; year++) {
+    for (year; year <= latestYear; year++) {
       for (String month in months) {
         monthYearList.add('$month $year');
       }
     }
-
     return monthYearList;
   }
 
